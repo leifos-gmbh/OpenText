@@ -1,0 +1,7 @@
+tab_ot_settings#:#Einstellungen
+tbl_ot_settings#:#Einstellungen zur Nutzung der OpenText-Archivierung
+tbl_ot_settings_active#:#Aktiv
+tbl_ot_settings_section_auth#:#Einstellungen zur Authentifizierung
+tbl_ot_settings_username#:#Benutzername
+tbl_ot_settings_password#:#Passwort
+tbl_ot_settings_domain#:#Domäne
