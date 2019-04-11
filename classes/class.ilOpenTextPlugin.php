@@ -61,6 +61,7 @@ class ilOpenTextPlugin extends ilEventHookPlugin
 	 */
 	protected function init()
 	{
+		require($this->getDirectory().'/vendor/autoload.php');
 		$this->initAutoLoad();
 	}
 

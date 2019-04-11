@@ -12,6 +12,8 @@ class ilOpenTextSettings
 {
 	const SETTINGS_MODULE = 'xopentext';
 
+	const OCTS_HEADER_TICKET_NAME = 'OTCSTicket';
+
 	/**
 	 * @var \ilOpenTextSettings
 	 */
@@ -31,7 +33,7 @@ class ilOpenTextSettings
 	/**
 	 * @var string
 	 */
-	private $url = '';
+	private $uri = '';
 
 	/**
 	 * @var string
@@ -47,6 +49,11 @@ class ilOpenTextSettings
 	 * @var string
 	 */
 	private $domain = '';
+
+	/**
+	 * @var int
+	 */
+	private $base_folder_id = 0;
 
 	/**
 	 * ilOpenTextSettings constructor.
@@ -80,6 +87,22 @@ class ilOpenTextSettings
 	public function isActive() : bool
 	{
 		return $this->active;
+	}
+
+	/**
+	 * @param string $a_uri
+	 */
+	public function setUri(string $a_uri)
+	{
+		$this->uri = $a_uri;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getUri() : string
+	{
+		return $this->uri;
 	}
 
 	/**
@@ -130,6 +153,22 @@ class ilOpenTextSettings
 		return $this->domain;
 	}
 
+	/**
+	 * @param int $id
+	 */
+	public function setBaseFolderId($id)
+	{
+		$this->base_folder_id = $id;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getBaseFolderId()
+	{
+		return $this->base_folder_id;
+	}
+
 
 	/**
 	 * save settings
@@ -137,9 +176,11 @@ class ilOpenTextSettings
 	public function save()
 	{
 		$this->getStorage()->set('active', (int) $this->isActive());
+		$this->getStorage()->set('uri',$this->getUri());
 		$this->getStorage()->set('username', $this->getUsername());
 		$this->getStorage()->set('password', $this->getPassword());
 		$this->getStorage()->set('domain', $this->getDomain());
+		$this->getStorage()->set('base_folder_id', $this->getBaseFolderId());
 	}
 
 	/**
@@ -156,9 +197,11 @@ class ilOpenTextSettings
 	protected function loadFromDb()
 	{
 		$this->setActive((bool) $this->getStorage()->get('active'));
+		$this->setUri((string) $this->getStorage()->get('uri'));
 		$this->setUsername((string) $this->getStorage()->get('username'));
 		$this->setPassword((string) $this->getStorage()->get('password'));
 		$this->setDomain((string) $this->getStorage()->get('domain'));
+		$this->setBaseFolderId((string) $this->getStorage()->get('base_folder_id'));
 	}
 
 
