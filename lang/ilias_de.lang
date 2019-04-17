@@ -8,3 +8,4 @@ tbl_ot_settings_domain#:#Domäne
 tbl_ot_settings_url#:#OpenText REST-API-URL
 tbl_ot_settings_base_folder#:#Root-Knoten
 tbl_ot_settings_base_folder_info#:#Bitte geben Sie die ID des OpenText-Knotens an, der als Basis zur Dateiarchivierung dienen soll.
+ot_ping#:#Verbindungstest

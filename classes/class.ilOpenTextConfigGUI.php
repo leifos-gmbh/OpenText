@@ -2,6 +2,8 @@
 
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
+use Swagger\Client\Model\AuthenticationInfo;
+
 
 /**
  * Config gui
@@ -170,7 +172,7 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 			$settings->setActive($form->getInput('active'));
 			$settings->setUri($form->getInput('uri'));
 			$settings->setUsername($form->getInput('username'));
-			if(strcmp($form->getInput('password'), '***') !== 0)
+			if(strcmp($form->getInput('password'), '******') !== 0)
 			{
 				$settings->setPassword($form->getInput('password'));
 			}
@@ -195,6 +197,7 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 	{
 		global $DIC;
 
+		$this->logger->info('Starting connection test');
 		$settings = \ilOpenTextSettings::getInstance();
 
 		$res = null;
@@ -223,7 +226,7 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 			if(
 				is_array($res) &&
 				array_key_exists(0,$res) &&
-				$res[0] instanceof \Swagger\Client\Model\AuthenticationInfo)
+				$res[0] instanceof AuthenticationInfo)
 			{
 				$this->logger->info('Received ticket: ' . $res[0]->getTicket());
 				$config->setApiKey(ilOpenTextSettings::OCTS_HEADER_TICKET_NAME,$res[0]->getTicket());
