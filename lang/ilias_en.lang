@@ -1,0 +1,11 @@
+tab_ot_settings#:#Settings
+tbl_ot_settings#:#OpenText - Settings
+tbl_ot_settings_active#:#Active
+tbl_ot_settings_section_auth#:#Authentication Settings
+tbl_ot_settings_username#:#Username
+tbl_ot_settings_password#:#Password
+tbl_ot_settings_domain#:#Domain
+tbl_ot_settings_url#:#OpenText REST-API-URL
+tbl_ot_settings_base_folder#:#Root-Node
+tbl_ot_settings_base_folder_info#:#Please enter the ID of the OpenText root node.
+ot_ping#:#Connection Test

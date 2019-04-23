@@ -233,7 +233,24 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 			}
 
 			$res2 = $api->getNodeWithHttpInfo($settings->getBaseFolderId(),'',1);
-			$this->logger->dump($res2);
+
+
+			// add file
+			$file = \ilObjectFactory::getInstanceByRefId(70,false);
+			if($file instanceof \ilObjFile)
+			{
+				//new \SplFileObject('/home/stefan/Bilder/photos/0000_favoriten/laufer_spiess_bw.jpg'),
+				$res_add_file = $api->addNodeWithHttpInfo(
+					144,
+					$settings->getBaseFolderId(),
+					$file->getId().'_'.$file->getFileName(),
+					new \SplFileObject('/tmp/1.txt')
+				);
+
+				$this->logger->dump($res_add_file[0]);
+				$this->logger->info('response code: ' . $res_add_file[1]);
+				$this->logger->info('response header: ' . $res_add_file[2]);
+			}
 		}
 		catch(\Swagger\Client\ApiException $e)
 		{
