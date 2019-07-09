@@ -62,6 +62,9 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 	 */
 	public function fillRow($file)
 	{
+
+
+
 		$refs = $this->getReferences($file['obj_id']);
 		if(!count($refs)) {
 			$this->tpl->setCurrentBlock('title');
@@ -93,6 +96,10 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 		$last_update = new ilDateTime($file['last_update'], IL_CAL_DATETIME);
 		$this->tpl->setVariable('LAST_UPDATE', ilDatePresentation::formatDate($last_update));
 
+		if(array_key_exists('deleted', $file) && $file['deleted'] instanceof ilDateTime) {
+			$this->tpl->setVariable('DELETION_DATE', ilDatePresentation::formatDate($file['deleted']));
+		}
+
 	}
 
 	/**
@@ -119,7 +126,7 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 		$db = $DIC->database();
 
 		// all referenced obj type 'file' objects
-		$query = 'select distinct(obd.obj_id), title, description, create_date, last_update from object_data obd '.
+		$query = 'select distinct(obd.obj_id), title, description, create_date, last_update,deleted from object_data obd '.
 			'join object_reference obr on obd.obj_id = obr.obj_id '.
 			'where type = ' . $db->quote('file','text').' '.
 			'group by obd.obj_id';
@@ -134,6 +141,10 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 			$files[$counter]['description'] = $row->description;
 			$files[$counter]['create_date'] = $row->create_date;
 			$files[$counter]['last_update'] = $row->last_update;
+			$files[$counter]['deleted'] = null;
+			if(strlen($row->deleted)) {
+				$files[$counter]['deleted'] = new ilDateTime($row->deleted, IL_CAL_DATETIME, ilTimeZone::UTC);
+			}
 			++$counter;
 		}
 		return $files;
