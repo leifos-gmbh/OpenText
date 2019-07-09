@@ -88,5 +88,17 @@ class ilOpenTextPlugin extends ilEventHookPlugin
 		if (@include_once($class_file)) {
 			return;
 		}
+		$class_file = $this->getExceptionDirectory().'/class.' . $a_classname . '.php';
+		if (@include_once($class_file)) {
+			return;
+		}
+	}
+
+	/**
+	 * @return string
+	 */
+	private function getExceptionDirectory()
+	{
+		return $this->getDirectory().'/exceptions';
 	}
 }

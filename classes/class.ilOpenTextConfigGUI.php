@@ -12,6 +12,10 @@ use Swagger\Client\Model\AuthenticationInfo;
  */
 class ilOpenTextConfigGUI extends ilPluginConfigGUI
 {
+	const TAB_SETTINGS = 'settings';
+	const TAB_FILES = 'files';
+
+
 	/**
 	 * @var \ilLogger
 	 */
@@ -52,6 +56,29 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 
 		}
 	}
+
+	/**
+	 * @param string $active_tab
+	 */
+	protected function handleTabs(string $active_tab)
+	{
+		global $DIC;
+
+		$tabs = $DIC->tabs();
+		$ctrl = $DIC->ctrl();
+
+		$tabs->addTab(
+			self::TAB_SETTINGS,
+			$this->getPluginObject()->txt('tab_ot_settings'),
+			$ctrl->getLinkTarget($this,'configure')
+		);
+		$tabs->addTab(
+			self::TAB_FILES,
+			$this->getPluginObject()->txt('tab_ot_files'),
+			$ctrl->getLinkTarget($this,'files')
+		);
+		$tabs->activateTab($active_tab);
+	}
 	
 	/**
 	 * Show settings screen
@@ -66,14 +93,7 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 		$ilTabs = $DIC->tabs();
 		$ctrl = $DIC->ctrl();
 
-		$ilTabs->activateTab('settings');
-		
-		$ilTabs->addTab(
-			'settings',
-			$this->getPluginObject()->txt('tab_ot_settings'),
-			$ctrl->getLinkTarget($this,'configure')
-		);
-		
+		$this->handleTabs(self::TAB_SETTINGS);
 
 		if(!$form instanceof ilPropertyFormGUI)
 		{
@@ -155,7 +175,7 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 	}
 
 	/**
-	 *
+	 * Save settings
 	 */
 	protected function save()
 	{
@@ -190,6 +210,26 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 		$this->configure($form);
 	}
 
+
+	/**
+	 * Show repository file objects
+	 */
+	protected function files()
+	{
+		global $DIC;
+
+		$tpl = $DIC->ui()->mainTemplate();
+
+		$this->handleTabs(self::TAB_FILES);
+
+		$table = new ilOpenTextFileTableGUI($this, 'files');
+		$table->init();
+		$table->parse();
+
+		$tpl->setContent($table->getHTML());
+	}
+
+
 	/**
 	 *
 	 */
@@ -197,32 +237,53 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 	{
 		global $DIC;
 
+		$ctrl = $DIC->ctrl();
+
+		$connector = \ilOpenTextConnector::getInstance();
+		try {
+			// try to login
+			$connector->ping();
+
+			// try to fetch base node
+			//$connector->fetchNode(ilOpenTextSettings::getInstance()->getBaseFolderId());
+
+			ilUtil::sendSuccess(ilOpenTextPlugin::getInstance()->txt('success_connection'),true);
+			$ctrl->redirect($this, 'configure');
+		}
+		catch(\ilOpenTextConnectionException $e) {
+
+			ilUtil::sendFailure($e->getMessage(),true);
+			$ctrl->redirect($this, 'configure');
+		}
+
+
+
 		$this->logger->info('Starting connection test');
+		$selector = new ilOpenTextAuthHeaderSelector();
 		$settings = \ilOpenTextSettings::getInstance();
 
 		$res = null;
 
+
+		$this->logger->info('Api config');
+		$config = new \Swagger\Client\Configuration();
+		$config->setHost($settings->getUri());
+		$config->setUsername($settings->getUsername());
+		$config->setPassword($settings->getPassword());
+
+		$api = new \Swagger\Client\Api\DefaultApi(
+			null,
+			$config,
+			$selector
+		);
+
 		try {
-
-			$selector = new ilOpenTextAuthHeaderSelector();
-
-			$config = new \Swagger\Client\Configuration();
-			$config->setHost($settings->getUri());
-			$config->setUsername($settings->getUsername());
-			$config->setPassword($settings->getPassword());
-
-			$api = new \Swagger\Client\Api\DefaultApi(
-				null,
-				$config,
-				$selector
-			);
-
+			$this->logger->info('Auth call');
 			$res = $api->apiV1AuthPostWithHttpInfo(
 				$settings->getUsername(),
 				$settings->getPassword(),
 				$settings->getDomain()
 			);
-
 			if(
 				is_array($res) &&
 				array_key_exists(0,$res) &&
@@ -231,9 +292,22 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 				$this->logger->info('Received ticket: ' . $res[0]->getTicket());
 				$config->setApiKey(ilOpenTextSettings::OCTS_HEADER_TICKET_NAME,$res[0]->getTicket());
 			}
+			else {
+				$this->logger->dump($res);
+			}
+		}
+		catch(\Swagger\Client\ApiException $e) {
+			$this->logger->warning($settings->getUsername().':'.$settings->getPassword());
+			$this->logger->dump($e->getResponseObject(), ilLogLevel::WARNING);
+			$this->logger->warning('Error caught');
+			$this->logger->warning($e->getMessage());
+			$this->logger->warning($e->getResponseBody());
+		}
+
+
+		try {
 
 			$res2 = $api->getNodeWithHttpInfo($settings->getBaseFolderId(),'',1);
-
 
 			// add file
 			$file = \ilObjectFactory::getInstanceByRefId(70,false);
@@ -255,11 +329,18 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 		catch(\Swagger\Client\ApiException $e)
 		{
 			$this->logger->warning($settings->getUsername().':'.$settings->getPassword());
-			$this->logger->warning($e->getTraceAsString());
-			$this->logger->warning($e->getResponseBody());
-			$this->logger->warning($e->getResponseHeaders());
-			$this->logger->warning($res);
+
+			$this->logger->dump($e->getResponseObject(), ilLogLevel::WARNING);
+			$this->logger->warning('Error caught');
 			$this->logger->warning($e->getMessage());
+			$this->logger->warning($e->getResponseBody());
+
+
+			#$this->logger->warning($e->getTraceAsString());
+			#$this->logger->warning($e->getResponseBody());
+			#$this->logger->warning($e->getResponseHeaders());
+			#$this->logger->warning($res);
+			#$this->logger->warning($e->getMessage());
 		}
 
 		$DIC->ctrl()->redirect($this, 'configure');

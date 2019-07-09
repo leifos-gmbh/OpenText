@@ -9,3 +9,10 @@ tbl_ot_settings_url#:#OpenText REST-API-URL
 tbl_ot_settings_base_folder#:#Root-Knoten
 tbl_ot_settings_base_folder_info#:#Bitte geben Sie die ID des OpenText-Knotens an, der als Basis zur Dateiarchivierung dienen soll.
 ot_ping#:#Verbindungstest
+success_connection#:#Die Verbindung zur REST-Api konnte erfolgreich aufgebaut werden.
+file_create_date#:#Erstellungsdatum
+file_last_update#:#Letzte Aktualisierung
+file_sync_status#:#Synchronisierung
+file_actions#:#Aktionen
+tab_ot_files#:#ILIAS-Dateiobjekte
+file_repository#:#Gelöscht

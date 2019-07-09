@@ -9,3 +9,10 @@ tbl_ot_settings_url#:#OpenText REST-API-URL
 tbl_ot_settings_base_folder#:#Root-Node
 tbl_ot_settings_base_folder_info#:#Please enter the ID of the OpenText root node.
 ot_ping#:#Connection Test
+success_connection#:#Successfully connected to REST-Api
+file_create_date#:#Creation Date
+file_last_update#:#Last Update
+file_sync_status#:#Synchronization
+file_actions#:#Actions
+tab_ot_files#:#ILIAS File Objects
+file_repository#:#Deleted

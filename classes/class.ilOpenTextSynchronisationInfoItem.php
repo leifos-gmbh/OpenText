@@ -8,7 +8,8 @@ class ilOpenTextSynchronisationInfoItem
 {
 	const STATUS_SYNCHRONISED = 0;
 	const STATUS_IN_PROGRESS = 1;
-	const STATUS_PENDING = 2;
+	const STATUS_SCHEDULED = 2;
+	const STATUS_FAILURE = 3;
 
 	/**
 	 * @var ilDBInterface
@@ -23,7 +24,7 @@ class ilOpenTextSynchronisationInfoItem
 	/**
 	 * @var int
 	 */
-	private $ilias_id = 0;
+	private $obj_id = 0;
 
 	/**
 	 * @var int
@@ -41,19 +42,19 @@ class ilOpenTextSynchronisationInfoItem
 	 * @param $ilias_id
 	 * @param $opentext_id
 	 */
-	public function __construct($ilias_id, $opentext_id = 0, $status = self::STATUS_PENDING)
+	public function __construct($obj_id, $opentext_id = 0, $status = self::STATUS_PENDING)
 	{
 		global $DIC;
 
 		$this->db = $DIC->database();
-		$this->ilias_id = $ilias_id;
+		$this->obj_id = $obj_id;
 		$this->opentext_id = $opentext_id;
 		$this->status = $status;
 
 	}
 
 	/**
-	 * @param $a_id
+	 * @param int $a_id
 	 */
 	public function setOpenTextId($a_id)
 	{
@@ -68,6 +69,27 @@ class ilOpenTextSynchronisationInfoItem
 		return $this->opentext_id;
 	}
 
+	/**
+	 * @return int
+	 */
+	public function getObjId()
+	{
+		return $this->obj_id;
+	}
 
+	/**
+	 * @param $status
+	 */
+	public function setStatus($status)
+	{
+		$this->status = $status;
+	}
 
+	/**
+	 * @return int
+	 */
+	public function getStatus()
+	{
+		return $this->status;
+	}
 }
