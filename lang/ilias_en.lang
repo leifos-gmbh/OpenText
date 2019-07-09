@@ -16,3 +16,7 @@ file_sync_status#:#Synchronization
 file_actions#:#Actions
 tab_ot_files#:#ILIAS File Objects
 file_repository#:#Deleted
+status_scheduled#:#Planned
+status_in_progress#:#In Progress
+status_synchronized#:#Synchronized
+status_failed#:#Failed

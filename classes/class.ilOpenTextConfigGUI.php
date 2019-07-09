@@ -247,6 +247,11 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 			// try to fetch base node
 			//$connector->fetchNode(ilOpenTextSettings::getInstance()->getBaseFolderId());
 
+			// add missing info items
+			$info = ilOpenTextSynchronisationInfo::getInstance();
+			$info->createMissingItems();
+
+
 			ilUtil::sendSuccess(ilOpenTextPlugin::getInstance()->txt('success_connection'),true);
 			$ctrl->redirect($this, 'configure');
 		}

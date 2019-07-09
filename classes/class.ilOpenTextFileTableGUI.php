@@ -63,8 +63,6 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 	public function fillRow($file)
 	{
 
-
-
 		$refs = $this->getReferences($file['obj_id']);
 		if(!count($refs)) {
 			$this->tpl->setCurrentBlock('title');
@@ -100,6 +98,10 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 			$this->tpl->setVariable('DELETION_DATE', ilDatePresentation::formatDate($file['deleted']));
 		}
 
+		$this->tpl->setVariable('STATUS' ,
+			$this->plugin->txt(\ilOpenTextSynchronisationInfoItem::statusToLangKey($file['status']))
+		);
+
 	}
 
 	/**
@@ -126,8 +128,9 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 		$db = $DIC->database();
 
 		// all referenced obj type 'file' objects
-		$query = 'select distinct(obd.obj_id), title, description, create_date, last_update,deleted from object_data obd '.
+		$query = 'select distinct(obd.obj_id), title, description, create_date, obd.last_update,deleted, status, otxt_id from object_data obd '.
 			'join object_reference obr on obd.obj_id = obr.obj_id '.
+			'join ' . \ilOpenTextSynchronisationInfo::TABLE_ITEMS . ' otxt on obr.obj_id = otxt.obj_id '.
 			'where type = ' . $db->quote('file','text').' '.
 			'group by obd.obj_id';
 		$res = $db->query($query);
@@ -137,6 +140,12 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
 
 			$files[$counter]['obj_id'] = $row->obj_id;
+			$status = \ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED;
+			if($row->status) {
+				$status = $row->status;
+			}
+			$files[$counter]['status'] = $status;
+			$files[$counter]['otxt_id'] = $row->otxt_id;
 			$files[$counter]['title'] = $row->title;
 			$files[$counter]['description'] = $row->description;
 			$files[$counter]['create_date'] = $row->create_date;

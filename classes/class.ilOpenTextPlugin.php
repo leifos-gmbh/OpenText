@@ -43,7 +43,37 @@ class ilOpenTextPlugin extends ilEventHookPlugin
 	 */
 	public function handleEvent($a_component, $a_event, $a_parameter)
 	{
-		ilLoggerFactory::getLogger('otxt')->debug('Handling event: ' . $a_component . ' ' . $a_event);
+		switch($a_component) {
+			case 'Services/Object':
+
+				switch($a_event) {
+
+					case 'create':
+					case 'update':
+						ilLoggerFactory::getLogger('otxt')->notice('Handling event: ' . $a_component . ' ' . $a_event);
+						$this->handleUpdateEvent($a_parameter);
+						break;
+				}
+		}
+	}
+
+	/**
+	 * @param mixed $a_parameter whatever it is
+	 */
+	protected function handleUpdateEvent($a_parameter)
+	{
+		if(
+			is_array($a_parameter) &&
+			array_key_exists('obj_type', $a_parameter) &&
+			$a_parameter['obj_type'] == 'file' &&
+			array_key_exists('obj_id', $a_parameter)
+		) {
+			ilLoggerFactory::getLogger('otxt')->debug('Added new update command for obj_id ' . $a_parameter['obj_id']);
+			$info =  \ilOpenTextSynchronisationInfo::getInstance();
+			$item = $info->getItemForObjId($a_parameter['obj_id']);
+			$item->setStatus(ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED);
+			$item->save();
+		}
 	}
 
 

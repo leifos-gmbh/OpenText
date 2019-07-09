@@ -6,9 +6,11 @@
  */
 class ilOpenTextSynchronisationInfoItem
 {
-	const STATUS_SYNCHRONISED = 0;
+	const TABLE_ITEMS = 'evnt_evhk_otxt_items';
+
+	const STATUS_SCHEDULED = 0;
 	const STATUS_IN_PROGRESS = 1;
-	const STATUS_SCHEDULED = 2;
+	const STATUS_SYNCHRONISED = 2;
 	const STATUS_FAILURE = 3;
 
 	/**
@@ -34,7 +36,7 @@ class ilOpenTextSynchronisationInfoItem
 	/**
 	 * @var int
 	 */
-	private $status = self::STATUS_PENDING;
+	private $status = self::STATUS_SCHEDULED;
 
 
 	/**
@@ -42,7 +44,7 @@ class ilOpenTextSynchronisationInfoItem
 	 * @param $ilias_id
 	 * @param $opentext_id
 	 */
-	public function __construct($obj_id, $opentext_id = 0, $status = self::STATUS_PENDING)
+	public function __construct($obj_id, $opentext_id = 0, $status = self::STATUS_SCHEDULED)
 	{
 		global $DIC;
 
@@ -51,6 +53,30 @@ class ilOpenTextSynchronisationInfoItem
 		$this->opentext_id = $opentext_id;
 		$this->status = $status;
 
+	}
+
+	/**
+	 * @param int $a_status
+	 * @return string
+	 */
+	public static function statusToLangKey($a_status)
+	{
+		$lang_key = '';
+		switch($a_status) {
+			case self::STATUS_SCHEDULED:
+				$lang_key = 'status_scheduled';
+				break;
+			case self::STATUS_IN_PROGRESS:
+				$lang_key = 'status_in_progress';
+				break;
+			case self::STATUS_SYNCHRONISED:
+				$lang_key = 'status_synchronized';
+				break;
+			case self::STATUS_FAILURE:
+				$lang_key = 'status_failure';
+				break;
+		}
+		return $lang_key;
 	}
 
 	/**
@@ -91,5 +117,52 @@ class ilOpenTextSynchronisationInfoItem
 	public function getStatus()
 	{
 		return $this->status;
+	}
+
+	/**
+	 * Save entry
+	 */
+	public function save()
+	{
+		$query = 'select * from ' . self::TABLE_ITEMS. ' '.
+			'where obj_id = ' . $this->db->quote($this->getObjId(),'integer');
+		$res = $this->db->query($query);
+		if($res->numRows() > 0) {
+			$this->update();
+		}
+		else {
+			$this->create();
+		}
+	}
+
+	/**
+	 * Create new entry
+	 */
+	protected function create()
+	{
+		$query = 'insert into ' . self::TABLE_ITEMS . ' '.
+			'(obj_id, otxt_id, status, last_update) '.
+			'values( '.
+			$this->db->quote($this->getObjId(),'integer').', '.
+			$this->db->quote($this->getOpenTextId(),'integer'). ', '.
+			$this->db->quote($this->getStatus(),'integer'). ', '.
+			$this->db->now().' '.
+			')';
+		$this->db->manipulate($query);
+	}
+
+	/**
+	 * Update existing entry
+	 */
+	protected function update()
+	{
+		$query = 'update ' . self::TABLE_ITEMS. ' '.
+			'set '.
+			'otxt_id = ' .$this->db->quote($this->getOpenTextId(),'integer'). ', '.
+			'status = ' . $this->db->quote($this->getStatus(),'integer') . ', '.
+			'last_update = '.$this->db->now() .' '.
+			'where obj_id = ' . $this->db->quote($this->getObjId(),'integer');
+		$this->db->manipulate($query);
+
 	}
 }

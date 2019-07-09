@@ -16,3 +16,7 @@ file_sync_status#:#Synchronisierung
 file_actions#:#Aktionen
 tab_ot_files#:#ILIAS-Dateiobjekte
 file_repository#:#Gelöscht
+status_scheduled#:#Geplant
+status_in_progress#:#In Bearbeitung
+status_synchronized#:#Synchronisiert
+status_failed#:#Fehlgeschlagen
