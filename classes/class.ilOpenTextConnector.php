@@ -16,6 +16,8 @@ use Swagger\Client\Model\VersionsInfo;
  */
 class ilOpenTextConnector
 {
+	const OTXT_DOCUMENT_TYPE = 144;
+
 	/**
 	 * @var null
 	 */
@@ -112,6 +114,33 @@ class ilOpenTextConnector
 			throw new \ilOpenTextConnectionException($e->getMessage());
 		}
 
+	}
+
+	/**
+	 * @param $a_name
+	 * @param \SplFileObject $file
+	 * @return int id
+	 * @throws \ilOpenTextConnectionException
+	 */
+	public function addDocument($a_name, \SplFileObject $file)
+	{
+		$this->prepareApiCall();
+
+		try {
+			$res = $this->api->addDocument(
+				self::OTXT_DOCUMENT_TYPE,
+				$this->settings->getBaseFolderId(),
+				$a_name,
+				$file
+			);
+			$this->logger->notice($res);
+			return $res->getResults()->getData()->getProperties()->getId();
+		}
+		catch(Exception $e) {
+			$this->logger->error('Api add document failed with message: ' . $e->getMessage());
+			$this->logger->error($e->getResponseHeaders());
+			throw new \ilOpenTextConnectionException($e->getMessage());
+		}
 	}
 
 

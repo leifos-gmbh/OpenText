@@ -64,6 +64,9 @@ class ilOpenTextPlugin extends ilEventHookPlugin
 	{
 		$result->setStatus(ilCronJobResult::STATUS_OK);
 
+
+
+
 		// add missing info items
 		$info = ilOpenTextSynchronisationInfo::getInstance();
 		$info->createMissingItems();

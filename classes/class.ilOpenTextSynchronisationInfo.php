@@ -81,6 +81,34 @@ class ilOpenTextSynchronisationInfo
 	}
 
 	/**
+	 * Get items for synchronization
+	 * @return \ilOpenTextSynchronisationInfoItem[]
+	 */
+	public function getItemsForSynchronization()
+	{
+		if($this->info_items_initialized) {
+			return $this->info_items;
+		}
+
+		$query = 'select obj_id, otxt_id, status from ' . \ilOpenTextSynchronisationInfo::TABLE_ITEMS. ' '.
+			'where status = ' . $this->db->quote(\ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED, 'integer');
+		$res = $this->db->query($query);
+
+		$this->info_items = [];
+		$this->info_items_initialized = true;
+		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
+
+			$this->info_items[] = new \ilOpenTextSynchronisationInfoItem(
+				$row->obj_id,
+				$row->otxt_id,
+				$row->status
+			);
+		}
+		return $this->info_items;
+	}
+
+
+	/**
 	 * @throws \ilDatabaseException
 	 */
 	public function createMissingItems()
@@ -102,5 +130,6 @@ class ilOpenTextSynchronisationInfo
 			$new_entry->save();
 			$this->logger->debug('Added new opentxt item for obj_id : ' . $row->obj_id);
 		}
+		$this->info_items_initialized = false;
 	}
 }
