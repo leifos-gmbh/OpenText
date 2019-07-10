@@ -5,6 +5,8 @@
 use Swagger\Client\Configuration;
 use Swagger\Client\Api\DefaultApi;
 use Swagger\Client\ApiException;
+use Swagger\Client\Model\V2ResponseElement;
+use Swagger\Client\Model\VersionsInfo;
 
 /**
  * Connector for all rest api calls.
@@ -68,6 +70,48 @@ class ilOpenTextConnector
 	public function ping()
 	{
 		$this->prepareApiCall();
+	}
+
+
+	/**
+	 * @param $node_id
+	 * @return \Swagger\Client\Model\V2ResponseElement
+	 * @throws \ilOpenTextConnectionException
+	 */
+	public function getNode($node_id)
+	{
+		$this->prepareApiCall();
+
+		try {
+			$res = $this->api->getNode($node_id);
+			return $res;
+		}
+		catch(Exception $e) {
+			$this->logger->error('Api get node failed with message: ' . $e->getMessage());
+			$this->logger->error($e->getResponseHeaders());
+			throw new \ilOpenTextConnectionException($e->getMessage());
+		}
+	}
+
+	/**
+	 * @param int $node_id
+	 * @return \Swagger\Client\Model\VersionsInfo
+	 * @throws \ilOpenTextConnectionException
+	 */
+	public function getVersions($node_id)
+	{
+		$this->prepareApiCall();
+
+		try {
+			$res = $this->api->getVersions($node_id);
+			return $res;
+		}
+		catch(Exception $e) {
+			$this->logger->error('Api get versions failed with message: ' . $e->getMessage());
+			$this->logger->error($e->getResponseHeaders());
+			throw new \ilOpenTextConnectionException($e->getMessage());
+		}
+
 	}
 
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * V2ResultPost
+ * V2Columns
  *
  * PHP version 5
  *
@@ -33,14 +33,14 @@ use \ArrayAccess;
 use \Swagger\Client\ObjectSerializer;
 
 /**
- * V2ResultPost Class Doc Comment
+ * V2Columns Class Doc Comment
  *
  * @category Class
  * @package  Swagger\Client
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class V2ResultPost implements ModelInterface, ArrayAccess
+class V2Columns implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'V2ResultPost';
+    protected static $swaggerModelName = 'V2Columns';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,7 +57,10 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'data' => '\Swagger\Client\Model\V2DataPost'
+        'data_type' => 'int',
+        'key' => 'string',
+        'name' => 'string',
+        'sort_key' => 'string'
     ];
 
     /**
@@ -66,7 +69,10 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'data' => null
+        'data_type' => 'int32',
+        'key' => null,
+        'name' => null,
+        'sort_key' => null
     ];
 
     /**
@@ -96,7 +102,10 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'data' => 'data'
+        'data_type' => 'data_type',
+        'key' => 'key',
+        'name' => 'name',
+        'sort_key' => 'sort_key'
     ];
 
     /**
@@ -105,7 +114,10 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'data' => 'setData'
+        'data_type' => 'setDataType',
+        'key' => 'setKey',
+        'name' => 'setName',
+        'sort_key' => 'setSortKey'
     ];
 
     /**
@@ -114,7 +126,10 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'data' => 'getData'
+        'data_type' => 'getDataType',
+        'key' => 'getKey',
+        'name' => 'getName',
+        'sort_key' => 'getSortKey'
     ];
 
     /**
@@ -177,7 +192,10 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['data'] = isset($data['data']) ? $data['data'] : null;
+        $this->container['data_type'] = isset($data['data_type']) ? $data['data_type'] : null;
+        $this->container['key'] = isset($data['key']) ? $data['key'] : null;
+        $this->container['name'] = isset($data['name']) ? $data['name'] : null;
+        $this->container['sort_key'] = isset($data['sort_key']) ? $data['sort_key'] : null;
     }
 
     /**
@@ -205,25 +223,97 @@ class V2ResultPost implements ModelInterface, ArrayAccess
 
 
     /**
-     * Gets data
+     * Gets data_type
      *
-     * @return \Swagger\Client\Model\V2DataPost
+     * @return int
      */
-    public function getData()
+    public function getDataType()
     {
-        return $this->container['data'];
+        return $this->container['data_type'];
     }
 
     /**
-     * Sets data
+     * Sets data_type
      *
-     * @param \Swagger\Client\Model\V2DataPost $data data
+     * @param int $data_type data type
      *
      * @return $this
      */
-    public function setData($data)
+    public function setDataType($data_type)
     {
-        $this->container['data'] = $data;
+        $this->container['data_type'] = $data_type;
+
+        return $this;
+    }
+
+    /**
+     * Gets key
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->container['key'];
+    }
+
+    /**
+     * Sets key
+     *
+     * @param string $key key
+     *
+     * @return $this
+     */
+    public function setKey($key)
+    {
+        $this->container['key'] = $key;
+
+        return $this;
+    }
+
+    /**
+     * Gets name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->container['name'];
+    }
+
+    /**
+     * Sets name
+     *
+     * @param string $name name
+     *
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->container['name'] = $name;
+
+        return $this;
+    }
+
+    /**
+     * Gets sort_key
+     *
+     * @return string
+     */
+    public function getSortKey()
+    {
+        return $this->container['sort_key'];
+    }
+
+    /**
+     * Sets sort_key
+     *
+     * @param string $sort_key Sort key
+     *
+     * @return $this
+     */
+    public function setSortKey($sort_key)
+    {
+        $this->container['sort_key'] = $sort_key;
 
         return $this;
     }

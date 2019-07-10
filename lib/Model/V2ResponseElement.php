@@ -1,6 +1,6 @@
 <?php
 /**
- * V2ResultPost
+ * V2ResponseElement
  *
  * PHP version 5
  *
@@ -33,14 +33,14 @@ use \ArrayAccess;
 use \Swagger\Client\ObjectSerializer;
 
 /**
- * V2ResultPost Class Doc Comment
+ * V2ResponseElement Class Doc Comment
  *
  * @category Class
  * @package  Swagger\Client
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class V2ResultPost implements ModelInterface, ArrayAccess
+class V2ResponseElement implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'V2ResultPost';
+    protected static $swaggerModelName = 'V2ResponseElement';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,7 +57,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'data' => '\Swagger\Client\Model\V2DataPost'
+        'results' => '\Swagger\Client\Model\V2Result'
     ];
 
     /**
@@ -66,7 +66,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'data' => null
+        'results' => null
     ];
 
     /**
@@ -96,7 +96,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'data' => 'data'
+        'results' => 'results'
     ];
 
     /**
@@ -105,7 +105,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'data' => 'setData'
+        'results' => 'setResults'
     ];
 
     /**
@@ -114,7 +114,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'data' => 'getData'
+        'results' => 'getResults'
     ];
 
     /**
@@ -177,7 +177,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['data'] = isset($data['data']) ? $data['data'] : null;
+        $this->container['results'] = isset($data['results']) ? $data['results'] : null;
     }
 
     /**
@@ -205,25 +205,25 @@ class V2ResultPost implements ModelInterface, ArrayAccess
 
 
     /**
-     * Gets data
+     * Gets results
      *
-     * @return \Swagger\Client\Model\V2DataPost
+     * @return \Swagger\Client\Model\V2Result
      */
-    public function getData()
+    public function getResults()
     {
-        return $this->container['data'];
+        return $this->container['results'];
     }
 
     /**
-     * Sets data
+     * Sets results
      *
-     * @param \Swagger\Client\Model\V2DataPost $data data
+     * @param \Swagger\Client\Model\V2Result $results results
      *
      * @return $this
      */
-    public function setData($data)
+    public function setResults($results)
     {
-        $this->container['data'] = $data;
+        $this->container['results'] = $results;
 
         return $this;
     }

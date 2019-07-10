@@ -58,6 +58,25 @@ class ilOpenTextPlugin extends ilEventHookPlugin
 	}
 
 	/**
+	 * @param \ilCronJobResult $result
+	 */
+	public function runCronJob(\ilCronJobResult $result)
+	{
+		$result->setStatus(ilCronJobResult::STATUS_OK);
+
+		// add missing info items
+		$info = ilOpenTextSynchronisationInfo::getInstance();
+		$info->createMissingItems();
+
+		$info->readScheduledItems();
+		foreach($info->getScheduledItems() as $item) {
+
+
+		}
+
+	}
+
+	/**
 	 * @param mixed $a_parameter whatever it is
 	 */
 	protected function handleUpdateEvent($a_parameter)

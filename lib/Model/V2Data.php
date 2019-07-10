@@ -1,6 +1,6 @@
 <?php
 /**
- * V2ResultPost
+ * V2Data
  *
  * PHP version 5
  *
@@ -33,14 +33,14 @@ use \ArrayAccess;
 use \Swagger\Client\ObjectSerializer;
 
 /**
- * V2ResultPost Class Doc Comment
+ * V2Data Class Doc Comment
  *
  * @category Class
  * @package  Swagger\Client
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class V2ResultPost implements ModelInterface, ArrayAccess
+class V2Data implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'V2ResultPost';
+    protected static $swaggerModelName = 'V2Data';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,7 +57,8 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'data' => '\Swagger\Client\Model\V2DataPost'
+        'columns' => '\Swagger\Client\Model\V2Columns[]',
+        'properties' => '\Swagger\Client\Model\V2Properties'
     ];
 
     /**
@@ -66,7 +67,8 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'data' => null
+        'columns' => null,
+        'properties' => null
     ];
 
     /**
@@ -96,7 +98,8 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'data' => 'data'
+        'columns' => 'columns',
+        'properties' => 'properties'
     ];
 
     /**
@@ -105,7 +108,8 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'data' => 'setData'
+        'columns' => 'setColumns',
+        'properties' => 'setProperties'
     ];
 
     /**
@@ -114,7 +118,8 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'data' => 'getData'
+        'columns' => 'getColumns',
+        'properties' => 'getProperties'
     ];
 
     /**
@@ -177,7 +182,8 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['data'] = isset($data['data']) ? $data['data'] : null;
+        $this->container['columns'] = isset($data['columns']) ? $data['columns'] : null;
+        $this->container['properties'] = isset($data['properties']) ? $data['properties'] : null;
     }
 
     /**
@@ -205,25 +211,49 @@ class V2ResultPost implements ModelInterface, ArrayAccess
 
 
     /**
-     * Gets data
+     * Gets columns
      *
-     * @return \Swagger\Client\Model\V2DataPost
+     * @return \Swagger\Client\Model\V2Columns[]
      */
-    public function getData()
+    public function getColumns()
     {
-        return $this->container['data'];
+        return $this->container['columns'];
     }
 
     /**
-     * Sets data
+     * Sets columns
      *
-     * @param \Swagger\Client\Model\V2DataPost $data data
+     * @param \Swagger\Client\Model\V2Columns[] $columns columns
      *
      * @return $this
      */
-    public function setData($data)
+    public function setColumns($columns)
     {
-        $this->container['data'] = $data;
+        $this->container['columns'] = $columns;
+
+        return $this;
+    }
+
+    /**
+     * Gets properties
+     *
+     * @return \Swagger\Client\Model\V2Properties
+     */
+    public function getProperties()
+    {
+        return $this->container['properties'];
+    }
+
+    /**
+     * Sets properties
+     *
+     * @param \Swagger\Client\Model\V2Properties $properties properties
+     *
+     * @return $this
+     */
+    public function setProperties($properties)
+    {
+        $this->container['properties'] = $properties;
 
         return $this;
     }

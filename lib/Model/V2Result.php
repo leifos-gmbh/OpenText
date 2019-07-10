@@ -1,6 +1,6 @@
 <?php
 /**
- * V2ResultPost
+ * V2Result
  *
  * PHP version 5
  *
@@ -33,14 +33,14 @@ use \ArrayAccess;
 use \Swagger\Client\ObjectSerializer;
 
 /**
- * V2ResultPost Class Doc Comment
+ * V2Result Class Doc Comment
  *
  * @category Class
  * @package  Swagger\Client
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class V2ResultPost implements ModelInterface, ArrayAccess
+class V2Result implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'V2ResultPost';
+    protected static $swaggerModelName = 'V2Result';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,7 +57,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'data' => '\Swagger\Client\Model\V2DataPost'
+        'data' => '\Swagger\Client\Model\V2Data'
     ];
 
     /**
@@ -207,7 +207,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
     /**
      * Gets data
      *
-     * @return \Swagger\Client\Model\V2DataPost
+     * @return \Swagger\Client\Model\V2Data
      */
     public function getData()
     {
@@ -217,7 +217,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
     /**
      * Sets data
      *
-     * @param \Swagger\Client\Model\V2DataPost $data data
+     * @param \Swagger\Client\Model\V2Data $data data
      *
      * @return $this
      */

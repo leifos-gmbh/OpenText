@@ -251,6 +251,10 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 			$info = ilOpenTextSynchronisationInfo::getInstance();
 			$info->createMissingItems();
 
+			$res = $connector->getNode(2487469);
+			$this->logger->dump($res, ilLogLevel::INFO);
+			$res = $connector->getVersions(2487469);
+			$this->logger->dump($res, ilLogLevel::INFO);
 
 			ilUtil::sendSuccess(ilOpenTextPlugin::getInstance()->txt('success_connection'),true);
 			$ctrl->redirect($this, 'configure');

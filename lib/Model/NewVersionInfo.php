@@ -1,6 +1,6 @@
 <?php
 /**
- * V2ResultPost
+ * NewVersionInfo
  *
  * PHP version 5
  *
@@ -33,14 +33,15 @@ use \ArrayAccess;
 use \Swagger\Client\ObjectSerializer;
 
 /**
- * V2ResultPost Class Doc Comment
+ * NewVersionInfo Class Doc Comment
  *
  * @category Class
+ * @description Info about newly created version
  * @package  Swagger\Client
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class V2ResultPost implements ModelInterface, ArrayAccess
+class NewVersionInfo implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -49,7 +50,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'V2ResultPost';
+    protected static $swaggerModelName = 'NewVersionInfo';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,7 +58,8 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'data' => '\Swagger\Client\Model\V2DataPost'
+        'id' => 'int',
+        'version_number' => 'int'
     ];
 
     /**
@@ -66,7 +68,8 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'data' => null
+        'id' => 'int32',
+        'version_number' => 'int32'
     ];
 
     /**
@@ -96,7 +99,8 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'data' => 'data'
+        'id' => 'id',
+        'version_number' => 'version_number'
     ];
 
     /**
@@ -105,7 +109,8 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'data' => 'setData'
+        'id' => 'setId',
+        'version_number' => 'setVersionNumber'
     ];
 
     /**
@@ -114,7 +119,8 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'data' => 'getData'
+        'id' => 'getId',
+        'version_number' => 'getVersionNumber'
     ];
 
     /**
@@ -177,7 +183,8 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['data'] = isset($data['data']) ? $data['data'] : null;
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        $this->container['version_number'] = isset($data['version_number']) ? $data['version_number'] : null;
     }
 
     /**
@@ -205,25 +212,49 @@ class V2ResultPost implements ModelInterface, ArrayAccess
 
 
     /**
-     * Gets data
+     * Gets id
      *
-     * @return \Swagger\Client\Model\V2DataPost
+     * @return int
      */
-    public function getData()
+    public function getId()
     {
-        return $this->container['data'];
+        return $this->container['id'];
     }
 
     /**
-     * Sets data
+     * Sets id
      *
-     * @param \Swagger\Client\Model\V2DataPost $data data
+     * @param int $id id
      *
      * @return $this
      */
-    public function setData($data)
+    public function setId($id)
     {
-        $this->container['data'] = $data;
+        $this->container['id'] = $id;
+
+        return $this;
+    }
+
+    /**
+     * Gets version_number
+     *
+     * @return int
+     */
+    public function getVersionNumber()
+    {
+        return $this->container['version_number'];
+    }
+
+    /**
+     * Sets version_number
+     *
+     * @param int $version_number The version number.
+     *
+     * @return $this
+     */
+    public function setVersionNumber($version_number)
+    {
+        $this->container['version_number'] = $version_number;
 
         return $this;
     }
