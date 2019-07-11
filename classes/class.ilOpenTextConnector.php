@@ -114,7 +114,6 @@ class ilOpenTextConnector
 			$this->logger->error($e->getResponseHeaders());
 			throw new \ilOpenTextConnectionException($e->getMessage());
 		}
-
 	}
 
 	/**
@@ -140,6 +139,35 @@ class ilOpenTextConnector
 		catch(Exception $e) {
 			$this->logger->error('Api add document failed with message: ' . $e->getMessage());
 			$this->logger->error($e->getResponseHeaders());
+			throw new \ilOpenTextConnectionException($e->getMessage());
+		}
+	}
+
+	/**
+	 * @param int $a_document_id
+	 * @param string $a_name
+	 * @param \SplFileObject $file
+	 * @throws \ilOpenTextConnectionException
+	 */
+	public function addVersion($a_document_id, $a_name, \SplFileObject $file)
+	{
+		$this->prepareApiCall();
+
+		try {
+			$res = $this->api->addVersion(
+				$a_document_id,
+				$file
+			);
+			$this->logger->info($res);
+		}
+		catch(ApiException $e) {
+			$this->logger->error('Api add version failed with message: ' . $e->getMessage());
+			$this->logger->error($e->getResponseHeaders());
+			throw new \ilOpenTextConnectionException($e->getMessage());
+		}
+		catch(\RuntimeException | \LogicException $e) {
+			$this->logger->error('Api add version failed with message: ' . $e->getMessage());
+			$this->logger->error($e->getTraceAsString());
 			throw new \ilOpenTextConnectionException($e->getMessage());
 		}
 	}
