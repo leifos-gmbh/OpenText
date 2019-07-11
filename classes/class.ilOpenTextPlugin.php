@@ -62,6 +62,11 @@ class ilOpenTextPlugin extends ilEventHookPlugin
 	 */
 	public function runCronJob(\ilCronJobResult $result)
 	{
+		global $DIC;
+
+		$logger = $DIC->logger()->otxt();
+		$logger->debug('Cron job started ... ');
+
 		$result->setStatus(ilCronJobResult::STATUS_OK);
 
 		// add missing info items
@@ -70,6 +75,8 @@ class ilOpenTextPlugin extends ilEventHookPlugin
 
 		$cron_handler = new ilOpenTextCronJobHandler(new \ilCronJobResult());
 		$cron_handler->run();
+
+		$logger->debug('Cron job finished');
 	}
 
 	/**
@@ -106,8 +113,18 @@ class ilOpenTextPlugin extends ilEventHookPlugin
 	 */
 	protected function init()
 	{
+		global $DIC;
+
+		$logger = $DIC->logger()->otxt();
+
 		require($this->getDirectory().'/vendor/autoload.php');
 		$this->initAutoLoad();
+
+		$logger->info('Set log level to: ' . ilOpenTextSettings::getInstance()->getLogLevel());
+
+		foreach($logger->getLogger()->getHandlers() as $handler) {
+			$handler->setLevel(ilOpenTextSettings::getInstance()->getLogLevel());
+		}
 	}
 
 	/**

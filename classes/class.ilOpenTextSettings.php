@@ -31,6 +31,11 @@ class ilOpenTextSettings
 	private $active = false;
 
 	/**
+	 * @var int
+	 */
+	private $log_level = \ilLogLevel::OFF;
+
+	/**
 	 * @var string
 	 */
 	private $uri = '';
@@ -87,6 +92,22 @@ class ilOpenTextSettings
 	public function isActive() : bool
 	{
 		return $this->active;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getLogLevel() : int
+	{
+		return $this->log_level;
+	}
+
+	/**
+	 * @param int $level
+	 */
+	public function setLogLevel(int $level)
+	{
+		$this->log_level = $level;
 	}
 
 	/**
@@ -176,6 +197,7 @@ class ilOpenTextSettings
 	public function save()
 	{
 		$this->getStorage()->set('active', (int) $this->isActive());
+		$this->getStorage()->set('level', (int) $this->getLogLevel());
 		$this->getStorage()->set('uri',$this->getUri());
 		$this->getStorage()->set('username', $this->getUsername());
 		$this->getStorage()->set('password', $this->getPassword());
@@ -197,6 +219,7 @@ class ilOpenTextSettings
 	protected function loadFromDb()
 	{
 		$this->setActive((bool) $this->getStorage()->get('active'));
+		$this->setLogLevel((int) $this->getStorage()->get('level', $this->getLogLevel()));
 		$this->setUri((string) $this->getStorage()->get('uri'));
 		$this->setUsername((string) $this->getStorage()->get('username'));
 		$this->setPassword((string) $this->getStorage()->get('password'));

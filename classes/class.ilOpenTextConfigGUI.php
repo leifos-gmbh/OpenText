@@ -131,6 +131,13 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 		$lock->setChecked($settings->isActive());
 		$form->addItem($lock);
 
+		$lng->loadLanguageModule('log');
+		$level = new ilSelectInputGUI($this->getPluginObject()->txt('tbl_ot_settings_loglevel'),'log_level');
+		$level->setOptions(\ilLogLevel::getLevelOptions());
+		$level->setValue($settings->getLogLevel());
+		$form->addItem($level);
+
+
 		$uri = new \ilTextInputGUI($this->getPluginObject()->txt('tbl_ot_settings_url'),'uri');
 		$uri->setMaxLength(255);
 		$uri->setRequired(true);
@@ -190,6 +197,7 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 		if($form->checkInput())
 		{
 			$settings->setActive($form->getInput('active'));
+			$settings->setLogLevel($form->getInput('log_level'));
 			$settings->setUri($form->getInput('uri'));
 			$settings->setUsername($form->getInput('username'));
 			if(strcmp($form->getInput('password'), '******') !== 0)
