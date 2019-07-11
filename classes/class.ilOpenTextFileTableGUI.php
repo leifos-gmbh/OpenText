@@ -46,7 +46,7 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 		$this->addColumn($this->lng->txt('title'), 'title','30%');
 		$this->addColumn($this->plugin->txt('file_create_date'),'cdate','15%');
 		$this->addColumn($this->plugin->txt('file_last_update'),'mdate','15%');
-		$this->addColumn($this->plugin->txt('file_sync_status'),'sync_stat','15%');
+		$this->addColumn($this->plugin->txt('file_sync_status'),'status_num','15%');
 		$this->addColumn($this->plugin->txt('file_repository'),'in_repository','15%');
 		$this->addColumn($this->plugin->txt('file_actions'),'actions','10%');
 
@@ -145,6 +145,7 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 				$status = $row->status;
 			}
 			$files[$counter]['status'] = $status;
+			$files[$counter]['status_num'] = $row->status;
 			$files[$counter]['otxt_id'] = $row->otxt_id;
 			$files[$counter]['title'] = $row->title;
 			$files[$counter]['description'] = $row->description;

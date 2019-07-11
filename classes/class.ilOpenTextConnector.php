@@ -7,6 +7,7 @@ use Swagger\Client\Api\DefaultApi;
 use Swagger\Client\ApiException;
 use Swagger\Client\Model\V2ResponseElement;
 use Swagger\Client\Model\VersionsInfo;
+use GuzzleHttp\Client;
 
 /**
  * Connector for all rest api calls.
@@ -193,13 +194,21 @@ class ilOpenTextConnector
 	private function initialize()
 	{
 		$this->logger->debug('Initializing rest api.');
+		
 		// init header selector
 		$selector = new \ilOpenTextAuthHeaderSelector();
 		$config = new Configuration();
+		$client = new Client(
+			[
+				'verify' => false,
+				'allow_redirects' => true
+		]);
+
+
 		$config->setHost($this->settings->getUri());
 
 		$this->api = new DefaultApi(
-			null,
+			$client,
 			$config,
 			$selector
 		);

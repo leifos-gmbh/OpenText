@@ -86,6 +86,8 @@ class ilOpenTextCronJobHandler
 		}
 
 
+
+
 		$item->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED);
 		$item->save();
 	}
