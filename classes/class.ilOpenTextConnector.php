@@ -194,7 +194,7 @@ class ilOpenTextConnector
 	private function initialize()
 	{
 		$this->logger->debug('Initializing rest api.');
-		
+
 		// init header selector
 		$selector = new \ilOpenTextAuthHeaderSelector();
 		$config = new Configuration();

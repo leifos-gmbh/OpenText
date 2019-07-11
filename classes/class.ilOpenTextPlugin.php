@@ -64,19 +64,12 @@ class ilOpenTextPlugin extends ilEventHookPlugin
 	{
 		$result->setStatus(ilCronJobResult::STATUS_OK);
 
-
-
-
 		// add missing info items
 		$info = ilOpenTextSynchronisationInfo::getInstance();
 		$info->createMissingItems();
 
-		$info->readScheduledItems();
-		foreach($info->getScheduledItems() as $item) {
-
-
-		}
-
+		$cron_handler = new ilOpenTextCronJobHandler(new \ilCronJobResult());
+		$cron_handler->run();
 	}
 
 	/**
