@@ -38,6 +38,11 @@ class ilOpenTextSettings
 	/**
 	 * @var string
 	 */
+	private $log_file = '';
+
+	/**
+	 * @var string
+	 */
 	private $uri = '';
 
 	/**
@@ -109,6 +114,23 @@ class ilOpenTextSettings
 	{
 		$this->log_level = $level;
 	}
+
+	/**
+	 * @param $a_file
+	 */
+	public function setLogFile($a_file)
+	{
+		$this->log_file = $a_file;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLogFile() : string
+	{
+		return $this->log_file;
+	}
+
 
 	/**
 	 * @param string $a_uri
@@ -198,6 +220,7 @@ class ilOpenTextSettings
 	{
 		$this->getStorage()->set('active', (int) $this->isActive());
 		$this->getStorage()->set('level', (int) $this->getLogLevel());
+		$this->getStorage()->set('file', (string) $this->getLogFile());
 		$this->getStorage()->set('uri',$this->getUri());
 		$this->getStorage()->set('username', $this->getUsername());
 		$this->getStorage()->set('password', $this->getPassword());
@@ -220,6 +243,7 @@ class ilOpenTextSettings
 	{
 		$this->setActive((bool) $this->getStorage()->get('active'));
 		$this->setLogLevel((int) $this->getStorage()->get('level', $this->getLogLevel()));
+		$this->setLogFile((string) $this->getStorage()->get('file', $this->getLogFile()));
 		$this->setUri((string) $this->getStorage()->get('uri'));
 		$this->setUsername((string) $this->getStorage()->get('username'));
 		$this->setPassword((string) $this->getStorage()->get('password'));

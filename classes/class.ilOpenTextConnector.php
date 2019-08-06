@@ -184,6 +184,7 @@ class ilOpenTextConnector
 			$this->initialize();
 		}
 		if(!$this->api->getConfig()->getApiKey(ilOpenTextSettings::OCTS_HEADER_TICKET_NAME)) {
+			$this->logger->debug('No api key avalailable: trying to login.');
 			$this->login();
 		}
 	}
@@ -211,6 +212,7 @@ class ilOpenTextConnector
 		catch(ApiException $e) {
 			$this->logger->warning('Api login failed with message: ' . $e->getMessage());
 			$this->logger->warning($e->getResponseHeaders());
+			$this->logger->warning($e->getResponseBody());
 			throw new \ilOpenTextConnectionException($e->getMessage(), ilOpenTextConnectionException::ERR_LOGIN_FAILED);
 		}
 	}
@@ -226,6 +228,16 @@ class ilOpenTextConnector
 		// init header selector
 		$selector = new \ilOpenTextAuthHeaderSelector();
 		$config = new Configuration();
+
+		if(
+			$this->settings->getLogLevel() == \ilLogLevel::DEBUG &&
+			$this->settings->getLogFile() != ''
+		)
+		{
+			$config->setDebug(true);
+			$config->setDebugFile($this->settings->getLogFile());
+		}
+
 		$client = new Client(
 			[
 				'verify' => false,

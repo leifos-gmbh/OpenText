@@ -2,6 +2,8 @@
 
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
+use Monolog\Handler\StreamHandler;
+
 /**
  * openText event plugin base class
  * @author Stefan Meyer <smeyer.ilias@gmx.de>
@@ -120,10 +122,27 @@ class ilOpenTextPlugin extends ilEventHookPlugin
 		require($this->getDirectory().'/vendor/autoload.php');
 		$this->initAutoLoad();
 
-		$logger->info('Set log level to: ' . ilOpenTextSettings::getInstance()->getLogLevel());
+		$settings = \ilOpenTextSettings::getInstance();
+		$logger->debug('Set log level to: ' . $settings->getLogLevel());
 
+		if(
+			$settings->getLogLevel() != \ilLogLevel::OFF &&
+			$settings->getLogFile() != ''
+		)
+		{
+			$stream_handler = new StreamHandler(
+				$settings->getLogFile(),
+				$settings->getLogLevel(),
+				true
+			);
+			$line_formatter = new ilLineFormatter(\ilLoggerFactory::DEFAULT_FORMAT, 'Y-m-d H:i:s.u',TRUE,TRUE);
+			$stream_handler->setFormatter($line_formatter);
+			$logger->getLogger()->pushHandler($stream_handler);
+		}
+
+		// format lines
 		foreach($logger->getLogger()->getHandlers() as $handler) {
-			$handler->setLevel(ilOpenTextSettings::getInstance()->getLogLevel());
+			$handler->setLevel($settings->getLogLevel());
 		}
 	}
 

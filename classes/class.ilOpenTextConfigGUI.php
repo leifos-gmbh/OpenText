@@ -133,10 +133,15 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 
 		$lng->loadLanguageModule('log');
 		$level = new ilSelectInputGUI($this->getPluginObject()->txt('tbl_ot_settings_loglevel'),'log_level');
+		$level->setHideSubForm($settings->getLogLevel() == \ilLogLevel::OFF,'< 1000');
 		$level->setOptions(\ilLogLevel::getLevelOptions());
 		$level->setValue($settings->getLogLevel());
 		$form->addItem($level);
 
+		$log_file = new \ilTextInputGUI($this->getPluginObject()->txt('tbl_ot_settings_logfile'),'log_file');
+		$log_file->setValue($settings->getLogFile());
+		$log_file->setInfo($this->getPluginObject()->txt('tbl_ot_settings_logfile_info'));
+		$level->addSubItem($log_file);
 
 		$uri = new \ilTextInputGUI($this->getPluginObject()->txt('tbl_ot_settings_url'),'uri');
 		$uri->setMaxLength(255);
@@ -198,6 +203,7 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 		{
 			$settings->setActive($form->getInput('active'));
 			$settings->setLogLevel($form->getInput('log_level'));
+			$settings->setLogFile($form->getInput('log_file'));
 			$settings->setUri($form->getInput('uri'));
 			$settings->setUsername($form->getInput('username'));
 			if(strcmp($form->getInput('password'), '******') !== 0)
@@ -263,95 +269,6 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 			ilUtil::sendFailure($e->getMessage(),true);
 			$ctrl->redirect($this, 'configure');
 		}
-
-
-
-		$this->logger->info('Starting connection test');
-		$selector = new ilOpenTextAuthHeaderSelector();
-		$settings = \ilOpenTextSettings::getInstance();
-
-		$res = null;
-
-
-		$this->logger->info('Api config');
-		$config = new \Swagger\Client\Configuration();
-		$config->setHost($settings->getUri());
-		$config->setUsername($settings->getUsername());
-		$config->setPassword($settings->getPassword());
-
-		$api = new \Swagger\Client\Api\DefaultApi(
-			null,
-			$config,
-			$selector
-		);
-
-		try {
-			$this->logger->info('Auth call');
-			$res = $api->apiV1AuthPostWithHttpInfo(
-				$settings->getUsername(),
-				$settings->getPassword(),
-				$settings->getDomain()
-			);
-			if(
-				is_array($res) &&
-				array_key_exists(0,$res) &&
-				$res[0] instanceof AuthenticationInfo)
-			{
-				$this->logger->info('Received ticket: ' . $res[0]->getTicket());
-				$config->setApiKey(ilOpenTextSettings::OCTS_HEADER_TICKET_NAME,$res[0]->getTicket());
-			}
-			else {
-				$this->logger->dump($res);
-			}
-		}
-		catch(\Swagger\Client\ApiException $e) {
-			$this->logger->warning($settings->getUsername().':'.$settings->getPassword());
-			$this->logger->dump($e->getResponseObject(), ilLogLevel::WARNING);
-			$this->logger->warning('Error caught');
-			$this->logger->warning($e->getMessage());
-			$this->logger->warning($e->getResponseBody());
-		}
-
-
-		try {
-
-			$res2 = $api->getNodeWithHttpInfo($settings->getBaseFolderId(),'',1);
-
-			// add file
-			$file = \ilObjectFactory::getInstanceByRefId(70,false);
-			if($file instanceof \ilObjFile)
-			{
-				//new \SplFileObject('/home/stefan/Bilder/photos/0000_favoriten/laufer_spiess_bw.jpg'),
-				$res_add_file = $api->addNodeWithHttpInfo(
-					144,
-					$settings->getBaseFolderId(),
-					$file->getId().'_'.$file->getFileName(),
-					new \SplFileObject('/tmp/1.txt')
-				);
-
-				$this->logger->dump($res_add_file[0]);
-				$this->logger->info('response code: ' . $res_add_file[1]);
-				$this->logger->info('response header: ' . $res_add_file[2]);
-			}
-		}
-		catch(\Swagger\Client\ApiException $e)
-		{
-			$this->logger->warning($settings->getUsername().':'.$settings->getPassword());
-
-			$this->logger->dump($e->getResponseObject(), ilLogLevel::WARNING);
-			$this->logger->warning('Error caught');
-			$this->logger->warning($e->getMessage());
-			$this->logger->warning($e->getResponseBody());
-
-
-			#$this->logger->warning($e->getTraceAsString());
-			#$this->logger->warning($e->getResponseBody());
-			#$this->logger->warning($e->getResponseHeaders());
-			#$this->logger->warning($res);
-			#$this->logger->warning($e->getMessage());
-		}
-
-		$DIC->ctrl()->redirect($this, 'configure');
 	}
 }
 ?>

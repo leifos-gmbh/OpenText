@@ -8,6 +8,8 @@ tbl_ot_settings_domain#:#Domain
 tbl_ot_settings_url#:#OpenText REST-API-URL
 tbl_ot_settings_base_folder#:#Root-Node
 tbl_ot_settings_base_folder_info#:#Please enter the ID of the OpenText root node.
+tbl_ot_settings_logfile#:#Log-File
+tbl_ot_settings_logfile_info#:#An additional log file which only tracks OpenText-specific log messages.
 tbl_ot_settings_loglevel#:#Log-Level
 ot_ping#:#Connection Test
 success_connection#:#Successfully connected to REST-Api
