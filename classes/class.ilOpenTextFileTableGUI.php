@@ -55,6 +55,11 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 		$this->setDefaultOrderDirection('asc');
 
 		$this->setRowTemplate('tpl.file_table_row.html', $this->plugin->getDirectory());
+
+		$this->setExternalSegmentation(true);
+		$this->setExternalSorting(true);
+
+		$this->determineOffsetAndOrder();
 	}
 
 	/**
@@ -110,9 +115,6 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 	public function parse()
 	{
 		$files = $this->getFiles();
-
-		$this->logger->dump($files);
-
 		$this->setData($files);
 	}
 
@@ -127,38 +129,82 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 
 		$db = $DIC->database();
 
-		// all referenced obj type 'file' objects
-		$query = 'select distinct(obd.obj_id), title, description, create_date, obd.last_update,deleted, status, otxt_id from object_data obd '.
-			'join object_reference obr on obd.obj_id = obr.obj_id '.
-			'join ' . \ilOpenTextSynchronisationInfo::TABLE_ITEMS . ' otxt on obr.obj_id = otxt.obj_id '.
-			'where type = ' . $db->quote('file','text').' '.
-			'group by obd.obj_id';
-		$res = $db->query($query);
+
+		$file_data = $this->getFilteredFiles();
 
 		$files = [];
 		$counter = 0;
-		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
+		foreach($file_data as $key => $row) {
 
 			$files[$counter]['obj_id'] = $row->obj_id;
 			$status = \ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED;
-			if($row->status) {
-				$status = $row->status;
+			if($row->status_num) {
+				$status = $row->status_num;
 			}
 			$files[$counter]['status'] = $status;
-			$files[$counter]['status_num'] = $row->status;
+			$files[$counter]['status_num'] = $row->status_num;
 			$files[$counter]['otxt_id'] = $row->otxt_id;
 			$files[$counter]['title'] = $row->title;
 			$files[$counter]['description'] = $row->description;
-			$files[$counter]['create_date'] = $row->create_date;
-			$files[$counter]['last_update'] = $row->last_update;
+			$files[$counter]['create_date'] = $row->cdate;
+			$files[$counter]['last_update'] = $row->mdate;
 			$files[$counter]['deleted'] = null;
-			if(strlen($row->deleted)) {
-				$files[$counter]['deleted'] = new ilDateTime($row->deleted, IL_CAL_DATETIME, ilTimeZone::UTC);
+			if(strlen($row->in_repository)) {
+				$files[$counter]['deleted'] = new ilDateTime($row->in_repository, IL_CAL_DATETIME, ilTimeZone::UTC);
 			}
 			++$counter;
 		}
 		return $files;
 	}
+
+	/**
+	 * Get filtered files (offset,limit,order)
+	 */
+	private function getFilteredFiles()
+	{
+		global $DIC;
+
+		$db = $DIC->database();
+
+		$fields = 'title, description, create_date cdate , obd.last_update mdate , deleted in_repository , status status_num, otxt_id ';
+		$query_fields = 'select distinct(obd.obj_id),' . $fields;
+		$query_count = 'select count(distinct(obd.obj_id)) files, ' . $fields;
+
+
+		$query =
+			'from object_data obd '.
+			'join object_reference obr on obd.obj_id = obr.obj_id '.
+			'join ' . \ilOpenTextSynchronisationInfo::TABLE_ITEMS . ' otxt on obr.obj_id = otxt.obj_id '.
+			'where type = ' . $db->quote('file','text').' ';
+
+		$query_order = 'ORDER BY  ' .
+			($this->getOrderField() ? $this->getOrderField() : $this->getDefaultOrderField()) .
+			' ' . strtoupper($this->getOrderDirection() ? $this->getOrderDirection() : $this->getDefaultOrderDirection()) . ' ';
+		$query_group = 'GROUP BY obd.obj_id ';
+
+		// count query
+		$count_query = $query_count . $query . $query_order;
+		$this->logger->debug('Querying: ' . $count_query);
+
+		$file_query = $query_fields . $query . $query_order;
+		$this->logger->debug('Querying: ' . $file_query);
+
+		$res = $db->query($count_query);
+		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT))  {
+			$this->setMaxCount($row->files);
+		}
+
+		$db->setLimit($this->getLimit(), $this->getOffset());
+		$res = $db->query($file_query);
+
+		$rows = [];
+		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
+			$rows[] = $row;
+		}
+
+		return $rows;
+	}
+
 
 	/**
 	 * @param int $obj_id
