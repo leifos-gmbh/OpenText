@@ -2,7 +2,7 @@
 // alphanumerical ID of the plugin; never change this
 $id = "otxt";
 // code version; must be changed for all code changes
-$version = '5.4.14.2';
+$version = '5.4.14.5';
 // ilias min and max version; must always reflect the versions that should
 // run with the plugin
 $ilias_min_version = "5.4.0";

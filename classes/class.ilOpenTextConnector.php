@@ -18,6 +18,7 @@ use GuzzleHttp\Client;
 class ilOpenTextConnector
 {
 	const OTXT_DOCUMENT_TYPE = 144;
+	const OTXT_FOLDER_TYPE = 0;
 
 	/**
 	 * @var null
@@ -117,23 +118,26 @@ class ilOpenTextConnector
 	}
 
 	/**
-	 * @param $a_name
+	 * @param string $a_name
+     * @param int $a_obj_id
 	 * @param \SplFileObject $file
 	 * @return int id
 	 * @throws \ilOpenTextConnectionException
 	 */
-	public function addDocument($a_name, \SplFileObject $file)
+	public function addDocument($a_name, $a_obj_id, \SplFileObject $file)
 	{
 		$this->prepareApiCall();
+
+		$a_parent_id = $this->buildParentFolders($a_obj_id);
 
 		try {
 			$res = $this->api->addDocument(
 				self::OTXT_DOCUMENT_TYPE,
-				$this->settings->getBaseFolderId(),
+				$a_parent_id,
 				$a_name,
 				$file
 			);
-			$this->logger->notice($res);
+			$this->logger->dump($res, \ilLogLevel::DEBUG);
 			return $res->getResults()->getData()->getProperties()->getId();
 		}
 		catch(Exception $e) {
@@ -142,6 +146,62 @@ class ilOpenTextConnector
 			throw new \ilOpenTextConnectionException($e->getMessage());
 		}
 	}
+
+    /**
+     * @param string $a_name
+     * @param int    $a_parent_id
+     * @return int
+     * @throws ilOpenTextConnectionException
+     */
+	public function addFolder(string $a_name, int $a_parent_id)
+    {
+        $this->prepareApiCall();
+
+        try {
+            $res = $this->api->addFolder(
+                self::OTXT_FOLDER_TYPE,
+                $a_parent_id,
+                $a_name
+            );
+            $this->logger->dump($res, \ilLogLevel::DEBUG);
+            $this->logger->debug('Received new folder id: ' . $res->getId());
+            return $res->getId();
+        }
+        catch (Exception $e) {
+            $this->logger->error('Api add folder failed with message: ' . $e->getMessage());
+            $this->logger->error($e->getResponseHeaders());
+            throw new \ilOpenTextConnectionException($e->getMessage());
+
+        }
+    }
+
+    /**
+     * @param $a_obj_id
+     * @throws ilOpenTextConnectionException
+     */
+	protected function buildParentFolders($a_obj_id)
+    {
+        $utils = \ilOpenTextUtils::getInstance();
+        $path = $utils->buildPathFromId($a_obj_id);
+        $path_map = \ilOpenTextPaths::getInstance();
+
+        $start_node = $this->settings->getBaseFolderId();
+        $current_path = [];
+        foreach (explode('/', $path) as $path_item) {
+
+            $current_path[] = $path_item;
+            $opentext_id = $path_map->lookupOpentTextId(implode('/',$current_path));
+
+            if(is_null($opentext_id)) {
+                $start_node = $this->addFolder($path_item, $start_node);
+                $path_map->addPath(new \ilOpenTextPath(implode('/', $current_path), $start_node));
+            }
+            else {
+                $start_node = $opentext_id;
+            }
+        }
+        return $start_node;
+    }
 
 	/**
 	 * @param int $a_document_id
@@ -234,7 +294,7 @@ class ilOpenTextConnector
 			$this->settings->getLogFile() != ''
 		)
 		{
-			$config->setDebug(true);
+			$config->setDebug(false);
 			$config->setDebugFile($this->settings->getLogFile());
 		}
 

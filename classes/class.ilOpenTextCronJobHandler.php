@@ -189,10 +189,14 @@ class ilOpenTextCronJobHandler
 			}
 
 		}
-		catch(\RuntimeException | \LogicException $e) {
-			$this->logger->warning('Cannot open file: ' . $file->getDirectory($file_version['version']).'/'.$name);
-			throw new \RuntimeException('Cannot open file');
+		catch(\RuntimeException $e) {
+            $this->logger->warning('Cannot open file: ' . $file->getDirectory($file_version['version']).'/'.$name);
+            throw new \RuntimeException('Cannot open file');
 		}
+		catch (\LogicException $e) {
+            $this->logger->warning('Cannot open file: ' . $file->getDirectory($file_version['version']).'/'.$name);
+            throw new \RuntimeException('Cannot open file');
+        }
 
 		try {
 			\ilOpenTextConnector::getInstance()->addVersion($item->getOpenTextId(), $name, $spl_file);
@@ -224,8 +228,11 @@ class ilOpenTextCronJobHandler
 			$this->logger->info('Using file absolute path: ' . $directory);
 
 			$spl_file = new \SplFileObject($directory.'/'.$version['filename']);
-
-			$new_document_id = ilOpenTextConnector::getInstance()->addDocument($name,$spl_file);
+			$new_document_id = ilOpenTextConnector::getInstance()->addDocument(
+			    $name,
+                $file->getId(),
+                $spl_file
+            );
 
 			$item->setOpenTextId($new_document_id);
 			$item->save();

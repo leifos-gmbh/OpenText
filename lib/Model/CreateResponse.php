@@ -1,6 +1,6 @@
 <?php
 /**
- * V2ResultPost
+ * CreateResponse
  *
  * PHP version 5
  *
@@ -33,14 +33,15 @@ use \ArrayAccess;
 use \Swagger\Client\ObjectSerializer;
 
 /**
- * V2ResultPost Class Doc Comment
+ * CreateResponse Class Doc Comment
  *
  * @category Class
+ * @description v1 createResponse
  * @package  Swagger\Client
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class V2ResultPost implements ModelInterface, ArrayAccess
+class CreateResponse implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -49,7 +50,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'V2ResultPost';
+    protected static $swaggerModelName = 'CreateResponse';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,7 +58,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'data' => '\Swagger\Client\Model\V2DataPost'
+        'id' => 'int'
     ];
 
     /**
@@ -66,7 +67,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'data' => null
+        'id' => 'int32'
     ];
 
     /**
@@ -96,7 +97,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'data' => 'data'
+        'id' => 'id'
     ];
 
     /**
@@ -105,7 +106,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'data' => 'setData'
+        'id' => 'setId'
     ];
 
     /**
@@ -114,7 +115,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'data' => 'getData'
+        'id' => 'getId'
     ];
 
     /**
@@ -177,7 +178,7 @@ class V2ResultPost implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['data'] = isset($data['data']) ? $data['data'] : null;
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
     }
 
     /**
@@ -205,25 +206,25 @@ class V2ResultPost implements ModelInterface, ArrayAccess
 
 
     /**
-     * Gets data
+     * Gets id
      *
-     * @return \Swagger\Client\Model\V2DataPost
+     * @return int
      */
-    public function getData()
+    public function getId()
     {
-        return $this->container['data'];
+        return $this->container['id'];
     }
 
     /**
-     * Sets data
+     * Sets id
      *
-     * @param \Swagger\Client\Model\V2DataPost $data data
+     * @param int $id The ID of the node which was created
      *
      * @return $this
      */
-    public function setData($data)
+    public function setId($id)
     {
-        $this->container['data'] = $data;
+        $this->container['id'] = $id;
 
         return $this;
     }
