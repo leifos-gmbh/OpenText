@@ -105,9 +105,13 @@ class ilOpenTextCronJobHandler
 			return;
 		}
 		// if no otxt_id is available => create document node
+
+        $status_ok = false;
+
 		if(!$item->getOpenTextId()) {
 			try {
 				$this->createFirstVersion($item, $file);
+				$status_ok = true;
 			}
 			catch(Exception $e) {
 				$this->logger->error('Create initial version failed with message: '  . $e->getMessage());
@@ -126,8 +130,14 @@ class ilOpenTextCronJobHandler
 			$item->save();
 			throw $e;
 		}
-		$item->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_SYNCHRONISED);
-		$item->save();
+		if($status_ok) {
+            $item->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_SYNCHRONISED);
+            $item->save();
+        }
+		else {
+		    $item->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_FAILURE);
+		    $item->save();
+        }
 	}
 
 	/**
@@ -187,6 +197,7 @@ class ilOpenTextCronJobHandler
 			catch(RuntimeException | LogicException $e) {
 				$this->logger->notice('Cannot open file: ' . $file->getDirectory($file_version['version'].'/'.$file_version['filename']));
 				$this->logger->warning($e->getMessage());
+				return false;
 			}
 			$this->logger->info('Comparing files: ' . $compare .' -> ' . $version_compare);
 			if(strcmp($compare,$version_compare) === 0) {
@@ -212,20 +223,23 @@ class ilOpenTextCronJobHandler
 			$spl_file = new \SplFileObject($file->getDirectory($file_version['version']).'/'.$name);
 
 			if($spl_file->isReadable()) {
-				$this->logger->info('File is readable');
+				$this->logger->debug('File is readable');
 			}
 			else {
-				$this->logger->info('File is not readable');
+				$this->logger->warning('File is not readable');
+				return false;
 			}
 
 		}
 		catch(\RuntimeException $e) {
+            // do not throw, since this would block the sync of other planned items
             $this->logger->warning('Cannot open file: ' . $file->getDirectory($file_version['version']).'/'.$name);
-            throw new \RuntimeException('Cannot open file');
+            return false;
 		}
 		catch (\LogicException $e) {
+            // do not throw, since this would block the sync of other planned items
             $this->logger->warning('Cannot open file: ' . $file->getDirectory($file_version['version']).'/'.$name);
-            throw new \RuntimeException('Cannot open file');
+            return false;
         }
 
 		try {
@@ -257,16 +271,24 @@ class ilOpenTextCronJobHandler
 			$directory = $file->getDirectory($version_id);
 			$this->logger->info('Using file absolute path: ' . $directory);
 
-			$spl_file = new \SplFileObject($directory.'/'.$version['filename']);
-			$new_document_id = ilOpenTextConnector::getInstance()->addDocument(
-			    $name,
-                $file,
-                $version,
-                $spl_file
-            );
-
-			$item->setOpenTextId($new_document_id);
-			$item->save();
+			try {
+                $spl_file = new \SplFileObject($directory.'/'.$version['filename']);
+                $new_document_id = ilOpenTextConnector::getInstance()->addDocument(
+                    $name,
+                    $file,
+                    $version,
+                    $spl_file
+                );
+                $item->setOpenTextId($new_document_id);
+                $item->save();
+            }
+            catch(RuntimeException | LogicException $e) {
+			    $this->logger->warning('Cannot create initial file version: ' . $e->getMessage());
+			    return false;
+            }
+            catch(\ilOpenTextConnectionException $e) {
+			    throw $e;
+            }
 			break;
 		}
 		return true;

@@ -117,13 +117,14 @@ class ilOpenTextConnector
 		}
 	}
 
-	/**
-	 * @param string $a_name
-     * @param int $a_obj_id
-	 * @param \SplFileObject $file
-	 * @return int id
-	 * @throws \ilOpenTextConnectionException
-	 */
+    /**
+     * @param string         $a_name
+     * @param ilObjFile      $ilfile
+     * @param                $version
+     * @param \SplFileObject $file
+     * @return int id
+     * @throws ilOpenTextConnectionException
+     */
 	public function addDocument($a_name, \ilObjFile $ilfile, $version, \SplFileObject $file)
 	{
 		$this->prepareApiCall();
@@ -141,9 +142,9 @@ class ilOpenTextConnector
 				$file,
                 null,
                 null,
-                null,
                 $create_date,
                 null,
+                (string) $version['obj_id'],
                 (string) $version['user_id'],
                 'generic_userid'
             );
@@ -229,6 +230,15 @@ class ilOpenTextConnector
 		$create_date = new DateTime($version['date']);
 
 		try {
+            $res = $this->api->addVersion(
+                $a_document_id,
+                $file,
+                null,
+                null,
+                $create_date
+            );
+            $this->logger->info($res);
+            /**
 			$res = $this->api->addVersion(
 				$a_document_id,
 				$file,
@@ -236,9 +246,11 @@ class ilOpenTextConnector
                 null,
                 $create_date,
                 null,
+                (string) $version['obj_id'],
                 (string) $version['user_id'],
                 'generic_userid'
 			);
+             **/
 			$this->logger->info($res);
 		}
 		catch(ApiException $e) {
