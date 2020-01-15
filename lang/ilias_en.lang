@@ -24,3 +24,5 @@ status_in_progress#:#In Progress
 status_synchronized#:#Synchronized
 status_failed#:#Failed
 cron_synchronized_items#:#Number of synchronized files:
+ilias_file_table_filter_status_all#:#Show all
+ilias_file_table_filter_status_update#:#Reset Synchronization Status

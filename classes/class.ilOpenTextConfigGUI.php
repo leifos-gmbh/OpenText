@@ -242,12 +242,80 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 
 		$this->handleTabs(self::TAB_FILES);
 
-		$table = new ilOpenTextFileTableGUI($this, 'files');
-		$table->init();
+		$table = $this->initFilesTable();
 		$table->parse();
 
 		$tpl->setContent($table->getHTML());
 	}
+
+    /**
+     * @return \ilOpenTextFileTableGUI
+     */
+	protected function initFilesTable() : \ilOpenTextFileTableGUI
+    {
+        $table = new ilOpenTextFileTableGUI($this, 'files');
+        $table->init();
+        $table->setFilterCommand('filesApplyFilter');
+        $table->setResetCommand('filesResetFilter');
+
+        return $table;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function filesStatusPlanned()
+    {
+        global $DIC;
+
+        $lng = $DIC->language();
+        $ctrl = $DIC->ctrl();
+
+        $files = (array) $_POST['file_id'];
+        if(!count($files)) {
+            \ilUtil::sendFailure($lng->txt('select_one'),true);
+            $this->ctrl->redirect($this, 'files');
+            return false;
+        }
+
+        $info_item = \ilOpenTextSynchronisationInfo::getInstance();
+        foreach($files as $file_id) {
+
+            $info_item_instance = $info_item->getItemForObjId($file_id);
+            if($info_item_instance->getStatus() == \ilOpenTextSynchronisationInfoItem::STATUS_FAILURE) {
+                $info_item_instance->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED);
+                $info_item_instance->save();
+            }
+        }
+
+        \ilUtil::sendSuccess($lng->txt('settings_saved'),true);
+        $ctrl->redirect($this,'files');
+    }
+
+    /**
+     * Apply filter
+     */
+	protected function filesApplyFilter()
+    {
+        $table = $this->initFilesTable();
+        $table->resetOffset();
+        $table->writeFilterToSession();
+
+        $this->files();
+    }
+
+    /**
+     * Reset filter
+     */
+    protected function filesResetFilter()
+    {
+        $table = $this->initFilesTable();
+        $table->resetOffset();
+        $table->resetFilter();
+
+        $this->files();
+    }
+
 
     /**
      *

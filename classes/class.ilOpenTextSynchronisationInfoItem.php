@@ -79,6 +79,24 @@ class ilOpenTextSynchronisationInfoItem
 		return $lang_key;
 	}
 
+    /**
+     * @return array
+     */
+	public static function getStatusSelectOptions()
+    {
+        global $DIC;
+
+        $lng = $DIC->language();
+        $options = [];
+
+        $options[-1] = \ilOpenTextPlugin::getInstance()->txt('ilias_file_table_filter_status_all');
+        $options[self::STATUS_SCHEDULED] = \ilOpenTextPlugin::getInstance()->txt(self::statusToLangKey(self::STATUS_SCHEDULED));
+        $options[self::STATUS_IN_PROGRESS] = \ilOpenTextPlugin::getInstance()->txt(self::statusToLangKey(self::STATUS_IN_PROGRESS));
+        $options[self::STATUS_SYNCHRONISED] = \ilOpenTextPlugin::getInstance()->txt(self::statusToLangKey(self::STATUS_SYNCHRONISED));
+        $options[self::STATUS_FAILURE] = \ilOpenTextPlugin::getInstance()->txt(self::statusToLangKey(self::STATUS_FAILURE));
+        return $options;
+    }
+
 	/**
 	 * @param int $a_id
 	 */

@@ -10,7 +10,20 @@
  */
 class ilOpenTextFileTableGUI extends ilTable2GUI
 {
-	const TABLE_ID = 'otxt_files';
+    /**
+     * @var string
+     */
+    private const OT_FORM_NAME = 'ot_ilias_files';
+
+    /**
+     * @var string
+     */
+	private const TABLE_ID = 'otxt_files';
+
+    /**
+     * @var string
+     */
+	private const OT_FILTER_STATUS = 'status';
 
 	/**
 	 * @var \ilOpenTextPlugin|null
@@ -21,6 +34,11 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 	 * @var \ilLogger|null
 	 */
 	private $logger = null;
+
+    /**
+     * @var array
+     */
+	private $current_filter = [];
 
 	/**
 	 * ilOpenTextFileTableGUI constructor.
@@ -43,6 +61,11 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 	 */
 	public function init()
 	{
+	    $this->setFormName(self::OT_FORM_NAME);
+	    $this->setFormAction($this->ctrl->getFormAction($this->getParentObject(),$this->getParentCmd()));
+        $this->initFilter();
+
+        $this->addColumn('','');
 		$this->addColumn($this->lng->txt('title'), 'title','30%');
 		$this->addColumn($this->plugin->txt('file_create_date'),'cdate','15%');
 		$this->addColumn($this->plugin->txt('file_last_update'),'mdate','15%');
@@ -60,13 +83,39 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 		$this->setExternalSorting(true);
 
 		$this->determineOffsetAndOrder();
+
+		$this->addMultiCommand(
+		    'filesStatusPlanned',
+            $this->plugin->txt('ilias_file_table_filter_status_update')
+        );
+
+		$this->setSelectAllCheckbox('file_id');
+
 	}
+
+    /**
+     * Init table filter
+     */
+	public function initFilter()
+    {
+        $this->setDefaultFilterVisiblity(true);
+
+        $status = $this->addFilterItemByMetaType(
+            self::OT_FILTER_STATUS,
+            ilTable2GUI::FILTER_SELECT,
+            false,
+            $this->plugin->txt('file_sync_status')
+        );
+        $status->setOptions(\ilOpenTextSynchronisationInfoItem::getStatusSelectOptions());
+        $this->current_filter[self::OT_FILTER_STATUS] = $status->getValue();
+    }
 
 	/**
 	 * @param array $a_set
 	 */
 	public function fillRow($file)
 	{
+	    $this->tpl->setVariable('VAL_ID', $file['obj_id']);
 
 		$refs = $this->getReferences($file['obj_id']);
 		if(!count($refs)) {
@@ -195,6 +244,13 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 			'join object_reference obr on obd.obj_id = obr.obj_id '.
 			'join ' . \ilOpenTextSynchronisationInfo::TABLE_ITEMS . ' otxt on obr.obj_id = otxt.obj_id '.
 			'where type = ' . $db->quote('file','text').' ';
+
+		if($this->current_filter[self::OT_FILTER_STATUS] >= \ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED) {
+
+		    $filter = 'and status = ' . $db->quote($this->current_filter[self::OT_FILTER_STATUS], \ilDBConstants::T_INTEGER);
+		    $query .= $filter . ' ';
+        }
+
 
 		$query_order = 'ORDER BY  ' .
 			($this->getOrderField() ? $this->getOrderField() : $this->getDefaultOrderField()) .
