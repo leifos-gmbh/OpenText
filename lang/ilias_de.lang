@@ -23,3 +23,4 @@ status_scheduled#:#Geplant
 status_in_progress#:#In Bearbeitung
 status_synchronized#:#Synchronisiert
 status_failed#:#Fehlgeschlagen
+cron_synchronized_items#:#Anzahl übertragener Dateien:

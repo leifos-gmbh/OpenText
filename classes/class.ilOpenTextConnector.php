@@ -124,19 +124,29 @@ class ilOpenTextConnector
 	 * @return int id
 	 * @throws \ilOpenTextConnectionException
 	 */
-	public function addDocument($a_name, $a_obj_id, \SplFileObject $file)
+	public function addDocument($a_name, \ilObjFile $ilfile, $version, \SplFileObject $file)
 	{
 		$this->prepareApiCall();
 
-		$a_parent_id = $this->buildParentFolders($a_obj_id);
+		$a_parent_id = $this->buildParentFolders($ilfile->getId());
 
 		try {
+
+		    $create_date = new DateTime($version['date']);
+
 			$res = $this->api->addDocument(
 				self::OTXT_DOCUMENT_TYPE,
 				$a_parent_id,
 				$a_name,
-				$file
-			);
+				$file,
+                null,
+                null,
+                null,
+                $create_date,
+                null,
+                (string) $version['user_id'],
+                'generic_userid'
+            );
 			$this->logger->dump($res, \ilLogLevel::DEBUG);
 			return $res->getResults()->getData()->getProperties()->getId();
 		}
@@ -193,30 +203,41 @@ class ilOpenTextConnector
             $opentext_id = $path_map->lookupOpentTextId(implode('/',$current_path));
 
             if(is_null($opentext_id)) {
+                $this->logger->debug('Creating new path: ' . implode('/', $current_path));
                 $start_node = $this->addFolder($path_item, $start_node);
                 $path_map->addPath(new \ilOpenTextPath(implode('/', $current_path), $start_node));
             }
             else {
                 $start_node = $opentext_id;
+                $this->logger->debug('Using existing path ' . implode('/', $current_path) . ' with id: ' . $opentext_id);
             }
         }
         return $start_node;
     }
 
-	/**
-	 * @param int $a_document_id
-	 * @param string $a_name
-	 * @param \SplFileObject $file
-	 * @throws \ilOpenTextConnectionException
-	 */
-	public function addVersion($a_document_id, $a_name, \SplFileObject $file)
+    /**
+     * @param int            $a_document_id
+     * @param ilObjFile      $ilfile
+     * @param array          $version
+     * @param \SplFileObject $file
+     * @throws ilOpenTextConnectionException
+     */
+	public function addVersion($a_document_id, \ilObjFile $ilfile, $version, \SplFileObject $file)
 	{
 		$this->prepareApiCall();
+
+		$create_date = new DateTime($version['date']);
 
 		try {
 			$res = $this->api->addVersion(
 				$a_document_id,
-				$file
+				$file,
+                null,
+                null,
+                $create_date,
+                null,
+                (string) $version['user_id'],
+                'generic_userid'
 			);
 			$this->logger->info($res);
 		}

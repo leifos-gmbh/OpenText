@@ -69,13 +69,11 @@ class ilOpenTextPlugin extends ilEventHookPlugin
 		$logger = $DIC->logger()->otxt();
 		$logger->debug('Cron job started ... ');
 
-		$result->setStatus(ilCronJobResult::STATUS_OK);
-
 		// add missing info items
 		$info = ilOpenTextSynchronisationInfo::getInstance();
 		$info->createMissingItems();
 
-		$cron_handler = new ilOpenTextCronJobHandler(new \ilCronJobResult());
+		$cron_handler = new ilOpenTextCronJobHandler($result);
 		$cron_handler->run();
 
 		$logger->debug('Cron job finished');

@@ -9,6 +9,11 @@ class ilOpenTextSynchronisationInfo
 {
 	const TABLE_ITEMS = 'evnt_evhk_otxt_items';
 
+    /**
+     * @var int
+     */
+	const SYNC_LIMIT = 1;
+
 	private static $instance = null;
 
 	/**
@@ -92,6 +97,8 @@ class ilOpenTextSynchronisationInfo
 
 		$query = 'select obj_id, otxt_id, status from ' . \ilOpenTextSynchronisationInfo::TABLE_ITEMS. ' '.
 			'where status = ' . $this->db->quote(\ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED, 'integer');
+
+		$this->db->setLimit(self::SYNC_LIMIT);
 		$res = $this->db->query($query);
 
 		$this->info_items = [];

@@ -21,6 +21,11 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 	 */
 	private $logger = null;
 
+    /**
+     * @var null | \ilCtrl
+     */
+	private $ctrl = null;
+
 
 	/**
 	 * ilOpenTextConfigGUI constructor.
@@ -30,6 +35,7 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 		global $DIC;
 
 		$this->logger = $DIC->logger()->otxt();
+		$this->ctrl = $DIC->ctrl();
 	}
 
 
@@ -242,6 +248,16 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 
 		$tpl->setContent($table->getHTML());
 	}
+
+    /**
+     *
+     */
+	protected function downloadLatestVersion()
+    {
+       $this->logger->debug('Trying to download latest version of : ' . $_GET['otxt_id']);
+
+       $this->ctrl->redirect($this, 'files');
+    }
 
 
 	/**

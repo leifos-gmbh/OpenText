@@ -73,7 +73,7 @@ class ilOpenTextSynchronisationInfoItem
 				$lang_key = 'status_synchronized';
 				break;
 			case self::STATUS_FAILURE:
-				$lang_key = 'status_failure';
+				$lang_key = 'status_failed';
 				break;
 		}
 		return $lang_key;

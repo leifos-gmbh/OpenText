@@ -23,3 +23,4 @@ status_scheduled#:#Planned
 status_in_progress#:#In Progress
 status_synchronized#:#Synchronized
 status_failed#:#Failed
+cron_synchronized_items#:#Number of synchronized files:

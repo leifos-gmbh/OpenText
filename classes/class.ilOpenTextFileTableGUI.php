@@ -78,8 +78,11 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 
 			$first_ref = $refs[0];
 
+			$link = \ilLink::_getLink($first_ref);
+
 			$this->tpl->setCurrentBlock('title');
-			$this->tpl->setVariable('OBJ_TITLE', $file['title']);
+			$this->tpl->setVariable('OBJ_LINKED_TITLE', $file['title']);
+			$this->tpl->setVariable('OBJ_LINK', $link);
 			$this->tpl->parseCurrentBlock();
 			foreach($refs as $ref) {
 
@@ -106,6 +109,22 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 		$this->tpl->setVariable('STATUS' ,
 			$this->plugin->txt(\ilOpenTextSynchronisationInfoItem::statusToLangKey($file['status']))
 		);
+
+		// show file download
+		if($file['status'] == \ilOpenTextSynchronisationInfoItem::STATUS_SYNCHRONISED) {
+
+		    $selection = new \ilAdvancedSelectionListGUI();
+		    $selection->setId('sync_item_' . $file['obj_id']);
+		    $selection->setListTitle($this->lng->txt('actions'));
+
+		    $this->ctrl->setParameter($this->getParentObject(),'otxt_id', $file['otxt_id']);
+		    $selection->addItem(
+		        $this->plugin->txt('download_latest_version'),
+                '',
+                $this->ctrl->getLinkTarget($this->getParentObject(),'downloadLatestVersion')
+            );
+		    $this->tpl->setVariable('ACTIONS', $selection->getHTML());
+        }
 
 	}
 
