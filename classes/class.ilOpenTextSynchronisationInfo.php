@@ -12,7 +12,7 @@ class ilOpenTextSynchronisationInfo
     /**
      * @var int
      */
-	const SYNC_LIMIT = 300;
+	const SYNC_LIMIT = 1;
 
 	private static $instance = null;
 

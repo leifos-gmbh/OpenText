@@ -19,6 +19,8 @@ class ilOpenTextConnector
 {
 	const OTXT_DOCUMENT_TYPE = 144;
 	const OTXT_FOLDER_TYPE = 0;
+	const OTXT_EXTERNAL_SOURCE_TYPE = 'file_system';
+	const OTXT_EXTERNAL_USER_TYPE = 'generic_userid';
 
 	/**
 	 * @var null
@@ -144,11 +146,17 @@ class ilOpenTextConnector
                 null,
                 $create_date,
                 null,
-                (string) $version['obj_id'],
+                self::OTXT_EXTERNAL_SOURCE_TYPE,
                 (string) $version['user_id'],
-                'generic_userid'
+                self::OTXT_EXTERNAL_USER_TYPE
             );
+
 			$this->logger->dump($res, \ilLogLevel::DEBUG);
+
+			// debug
+            #$res_versions = $this->getVersions($res->getResults()->getData()->getProperties()->getId());
+            #$this->logger->dump($res_versions);
+
 			return $res->getResults()->getData()->getProperties()->getId();
 		}
 		catch(Exception $e) {
@@ -235,23 +243,13 @@ class ilOpenTextConnector
                 $file,
                 null,
                 null,
-                $create_date
-            );
-            $this->logger->info($res);
-            /**
-			$res = $this->api->addVersion(
-				$a_document_id,
-				$file,
-                null,
-                null,
                 $create_date,
                 null,
-                (string) $version['obj_id'],
+                self::OTXT_EXTERNAL_SOURCE_TYPE,
                 (string) $version['user_id'],
-                'generic_userid'
-			);
-             **/
-			$this->logger->info($res);
+                self::OTXT_EXTERNAL_USER_TYPE
+            );
+            $this->logger->info($res);
 		}
 		catch(ApiException $e) {
 			$this->logger->error('Api add version failed with message: ' . $e->getMessage());
