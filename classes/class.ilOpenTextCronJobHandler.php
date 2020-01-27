@@ -123,6 +123,7 @@ class ilOpenTextCronJobHandler
 
 		try {
 			$this->synchronizeVersions($item, $file);
+			$status_ok = true;
 		}
 		catch(Exception $e) {
 			$this->logger->error('Version synchronization failed with message: ' . $e->getMessage());
@@ -139,6 +140,7 @@ class ilOpenTextCronJobHandler
 		    $item->save();
         }
 	}
+
 
 	/**
 	 *

@@ -87,4 +87,20 @@ class ilOpenTextUtils
 
         return $path_string;
     }
+
+    /**
+     * Generate a permanent link
+     * @param int $version_id
+     * @return string
+     */
+    public function generateOpenTextDirectLink(int $version_id) : string
+    {
+        $settings = \ilOpenTextSettings::getInstance();
+        $base_url = $settings->getUri();
+
+        $uri = $base_url . '?func=ll&objaction=overview&objid=';
+        $uri .= $version_id;
+
+        return $uri;
+    }
 }

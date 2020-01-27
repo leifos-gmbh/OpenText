@@ -160,7 +160,10 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 		);
 
 		// show file download
-		if($file['status'] == \ilOpenTextSynchronisationInfoItem::STATUS_SYNCHRONISED) {
+		if(
+		    $file['status'] == \ilOpenTextSynchronisationInfoItem::STATUS_SYNCHRONISED &&
+            (int) $file['otxt_id'] > 0
+        ) {
 
 		    $selection = new \ilAdvancedSelectionListGUI();
 		    $selection->setId('sync_item_' . $file['obj_id']);
@@ -168,9 +171,12 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 
 		    $this->ctrl->setParameter($this->getParentObject(),'otxt_id', $file['otxt_id']);
 		    $selection->addItem(
-		        $this->plugin->txt('download_latest_version'),
+		        $this->plugin->txt('open_in_opentext'),
                 '',
-                $this->ctrl->getLinkTarget($this->getParentObject(),'downloadLatestVersion')
+                \ilOpenTextUtils::getInstance()->generateOpenTextDirectLink($file['otxt_id']),
+                '',
+                '',
+                '_blank'
             );
 		    $this->tpl->setVariable('ACTIONS', $selection->getHTML());
         }

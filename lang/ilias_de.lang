@@ -26,3 +26,4 @@ status_failed#:#Fehlgeschlagen
 cron_synchronized_items#:#Anzahl übertragener Dateien:
 ilias_file_table_filter_status_all#:#Alle anzeigen
 ilias_file_table_filter_status_update#:#Status der Synchronisierung zurücksetzen
+open_in_opentext#:#In Skydoc anzeigen
