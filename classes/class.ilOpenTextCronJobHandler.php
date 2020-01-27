@@ -162,7 +162,7 @@ class ilOpenTextCronJobHandler
 		foreach ($file_versions as $file_version) {
 
 			if($this->isFileVersionSynchronized($file, $file_version, $open_text_versions)) {
-				$this->logger->debug('File version already synchronized: ');
+				$this->logger->debug('File version already synchronized: ' . $file_version['info_params']);
 				$this->logger->dump($file_version);
 				continue;
 			}
