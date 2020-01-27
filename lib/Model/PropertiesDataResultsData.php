@@ -1,6 +1,6 @@
 <?php
 /**
- * V2Properties
+ * PropertiesDataResultsData
  *
  * PHP version 5
  *
@@ -33,15 +33,15 @@ use \ArrayAccess;
 use \Swagger\Client\ObjectSerializer;
 
 /**
- * V2Properties Class Doc Comment
+ * PropertiesDataResultsData Class Doc Comment
  *
  * @category Class
- * @description v2 properties
+ * @description v2 propertiesDataResultsData
  * @package  Swagger\Client
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class V2Properties implements ModelInterface, ArrayAccess
+class PropertiesDataResultsData implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -50,7 +50,7 @@ class V2Properties implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'V2Properties';
+    protected static $swaggerModelName = 'propertiesDataResultsData';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -58,13 +58,17 @@ class V2Properties implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'advanced_versioning' => 'bool',
         'container' => 'bool',
         'container_size' => 'int',
-        'create_date' => 'string',
-        'create_user_id' => 'int',
+        'create_date' => '\DateTime',
         'description' => 'string',
-        'id' => 'int'
+        'external_create_date' => '\DateTime',
+        'external_identity' => 'string',
+        'external_identity_type' => 'string',
+        'external_modify_date' => '\DateTime',
+        'external_source' => 'string',
+        'size' => 'int',
+        'type' => 'int'
     ];
 
     /**
@@ -73,13 +77,17 @@ class V2Properties implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'advanced_versioning' => null,
         'container' => null,
         'container_size' => 'int32',
-        'create_date' => null,
-        'create_user_id' => 'int32',
+        'create_date' => 'date-time',
         'description' => null,
-        'id' => 'int32'
+        'external_create_date' => 'date-time',
+        'external_identity' => null,
+        'external_identity_type' => null,
+        'external_modify_date' => 'date-time',
+        'external_source' => null,
+        'size' => 'int32',
+        'type' => 'int32'
     ];
 
     /**
@@ -109,13 +117,17 @@ class V2Properties implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'advanced_versioning' => 'advanced_versioning',
         'container' => 'container',
         'container_size' => 'container_size',
         'create_date' => 'create_date',
-        'create_user_id' => 'create_user_id',
         'description' => 'description',
-        'id' => 'id'
+        'external_create_date' => 'external_create_date',
+        'external_identity' => 'external_identity',
+        'external_identity_type' => 'external_identity_type',
+        'external_modify_date' => 'external_modify_date',
+        'external_source' => 'external_source',
+        'size' => 'size',
+        'type' => 'type'
     ];
 
     /**
@@ -124,13 +136,17 @@ class V2Properties implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'advanced_versioning' => 'setAdvancedVersioning',
         'container' => 'setContainer',
         'container_size' => 'setContainerSize',
         'create_date' => 'setCreateDate',
-        'create_user_id' => 'setCreateUserId',
         'description' => 'setDescription',
-        'id' => 'setId'
+        'external_create_date' => 'setExternalCreateDate',
+        'external_identity' => 'setExternalIdentity',
+        'external_identity_type' => 'setExternalIdentityType',
+        'external_modify_date' => 'setExternalModifyDate',
+        'external_source' => 'setExternalSource',
+        'size' => 'setSize',
+        'type' => 'setType'
     ];
 
     /**
@@ -139,13 +155,17 @@ class V2Properties implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'advanced_versioning' => 'getAdvancedVersioning',
         'container' => 'getContainer',
         'container_size' => 'getContainerSize',
         'create_date' => 'getCreateDate',
-        'create_user_id' => 'getCreateUserId',
         'description' => 'getDescription',
-        'id' => 'getId'
+        'external_create_date' => 'getExternalCreateDate',
+        'external_identity' => 'getExternalIdentity',
+        'external_identity_type' => 'getExternalIdentityType',
+        'external_modify_date' => 'getExternalModifyDate',
+        'external_source' => 'getExternalSource',
+        'size' => 'getSize',
+        'type' => 'getType'
     ];
 
     /**
@@ -208,13 +228,17 @@ class V2Properties implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['advanced_versioning'] = isset($data['advanced_versioning']) ? $data['advanced_versioning'] : null;
         $this->container['container'] = isset($data['container']) ? $data['container'] : null;
         $this->container['container_size'] = isset($data['container_size']) ? $data['container_size'] : null;
         $this->container['create_date'] = isset($data['create_date']) ? $data['create_date'] : null;
-        $this->container['create_user_id'] = isset($data['create_user_id']) ? $data['create_user_id'] : null;
         $this->container['description'] = isset($data['description']) ? $data['description'] : null;
-        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        $this->container['external_create_date'] = isset($data['external_create_date']) ? $data['external_create_date'] : null;
+        $this->container['external_identity'] = isset($data['external_identity']) ? $data['external_identity'] : null;
+        $this->container['external_identity_type'] = isset($data['external_identity_type']) ? $data['external_identity_type'] : null;
+        $this->container['external_modify_date'] = isset($data['external_modify_date']) ? $data['external_modify_date'] : null;
+        $this->container['external_source'] = isset($data['external_source']) ? $data['external_source'] : null;
+        $this->container['size'] = isset($data['size']) ? $data['size'] : null;
+        $this->container['type'] = isset($data['type']) ? $data['type'] : null;
     }
 
     /**
@@ -242,30 +266,6 @@ class V2Properties implements ModelInterface, ArrayAccess
 
 
     /**
-     * Gets advanced_versioning
-     *
-     * @return bool
-     */
-    public function getAdvancedVersioning()
-    {
-        return $this->container['advanced_versioning'];
-    }
-
-    /**
-     * Sets advanced_versioning
-     *
-     * @param bool $advanced_versioning Whether or not this item uses standard or advanced versioning
-     *
-     * @return $this
-     */
-    public function setAdvancedVersioning($advanced_versioning)
-    {
-        $this->container['advanced_versioning'] = $advanced_versioning;
-
-        return $this;
-    }
-
-    /**
      * Gets container
      *
      * @return bool
@@ -278,7 +278,7 @@ class V2Properties implements ModelInterface, ArrayAccess
     /**
      * Sets container
      *
-     * @param bool $container container
+     * @param bool $container Whether or not this item is a container
      *
      * @return $this
      */
@@ -302,7 +302,7 @@ class V2Properties implements ModelInterface, ArrayAccess
     /**
      * Sets container_size
      *
-     * @param int $container_size container_size
+     * @param int $container_size The number of items in this container
      *
      * @return $this
      */
@@ -316,7 +316,7 @@ class V2Properties implements ModelInterface, ArrayAccess
     /**
      * Gets create_date
      *
-     * @return string
+     * @return \DateTime
      */
     public function getCreateDate()
     {
@@ -326,37 +326,13 @@ class V2Properties implements ModelInterface, ArrayAccess
     /**
      * Sets create_date
      *
-     * @param string $create_date create_date
+     * @param \DateTime $create_date The date that the item was created
      *
      * @return $this
      */
     public function setCreateDate($create_date)
     {
         $this->container['create_date'] = $create_date;
-
-        return $this;
-    }
-
-    /**
-     * Gets create_user_id
-     *
-     * @return int
-     */
-    public function getCreateUserId()
-    {
-        return $this->container['create_user_id'];
-    }
-
-    /**
-     * Sets create_user_id
-     *
-     * @param int $create_user_id create_user_id
-     *
-     * @return $this
-     */
-    public function setCreateUserId($create_user_id)
-    {
-        $this->container['create_user_id'] = $create_user_id;
 
         return $this;
     }
@@ -374,7 +350,7 @@ class V2Properties implements ModelInterface, ArrayAccess
     /**
      * Sets description
      *
-     * @param string $description description
+     * @param string $description A description of the item
      *
      * @return $this
      */
@@ -386,25 +362,169 @@ class V2Properties implements ModelInterface, ArrayAccess
     }
 
     /**
-     * Gets id
+     * Gets external_create_date
      *
-     * @return int
+     * @return \DateTime
      */
-    public function getId()
+    public function getExternalCreateDate()
     {
-        return $this->container['id'];
+        return $this->container['external_create_date'];
     }
 
     /**
-     * Sets id
+     * Sets external_create_date
      *
-     * @param int $id id
+     * @param \DateTime $external_create_date The external create date
      *
      * @return $this
      */
-    public function setId($id)
+    public function setExternalCreateDate($external_create_date)
     {
-        $this->container['id'] = $id;
+        $this->container['external_create_date'] = $external_create_date;
+
+        return $this;
+    }
+
+    /**
+     * Gets external_identity
+     *
+     * @return string
+     */
+    public function getExternalIdentity()
+    {
+        return $this->container['external_identity'];
+    }
+
+    /**
+     * Sets external_identity
+     *
+     * @param string $external_identity The external identity
+     *
+     * @return $this
+     */
+    public function setExternalIdentity($external_identity)
+    {
+        $this->container['external_identity'] = $external_identity;
+
+        return $this;
+    }
+
+    /**
+     * Gets external_identity_type
+     *
+     * @return string
+     */
+    public function getExternalIdentityType()
+    {
+        return $this->container['external_identity_type'];
+    }
+
+    /**
+     * Sets external_identity_type
+     *
+     * @param string $external_identity_type The external identity type
+     *
+     * @return $this
+     */
+    public function setExternalIdentityType($external_identity_type)
+    {
+        $this->container['external_identity_type'] = $external_identity_type;
+
+        return $this;
+    }
+
+    /**
+     * Gets external_modify_date
+     *
+     * @return \DateTime
+     */
+    public function getExternalModifyDate()
+    {
+        return $this->container['external_modify_date'];
+    }
+
+    /**
+     * Sets external_modify_date
+     *
+     * @param \DateTime $external_modify_date The external modify date
+     *
+     * @return $this
+     */
+    public function setExternalModifyDate($external_modify_date)
+    {
+        $this->container['external_modify_date'] = $external_modify_date;
+
+        return $this;
+    }
+
+    /**
+     * Gets external_source
+     *
+     * @return string
+     */
+    public function getExternalSource()
+    {
+        return $this->container['external_source'];
+    }
+
+    /**
+     * Sets external_source
+     *
+     * @param string $external_source The external source
+     *
+     * @return $this
+     */
+    public function setExternalSource($external_source)
+    {
+        $this->container['external_source'] = $external_source;
+
+        return $this;
+    }
+
+    /**
+     * Gets size
+     *
+     * @return int
+     */
+    public function getSize()
+    {
+        return $this->container['size'];
+    }
+
+    /**
+     * Sets size
+     *
+     * @param int $size The size of this item
+     *
+     * @return $this
+     */
+    public function setSize($size)
+    {
+        $this->container['size'] = $size;
+
+        return $this;
+    }
+
+    /**
+     * Gets type
+     *
+     * @return int
+     */
+    public function getType()
+    {
+        return $this->container['type'];
+    }
+
+    /**
+     * Sets type
+     *
+     * @param int $type An ID representing the type of the object
+     *
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->container['type'] = $type;
 
         return $this;
     }
