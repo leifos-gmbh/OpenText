@@ -302,7 +302,6 @@ class ilOpenTextConnector
         $this->prepareApiCall();
 
         try {
-            $this->lookupRegions(false);
             $res = $this->api->search($query, $slice, null, 1, $limit);
             $this->logger->dump($res);
             return $res->getResults();

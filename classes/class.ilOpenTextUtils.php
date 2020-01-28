@@ -108,12 +108,25 @@ class ilOpenTextUtils
      * @param string|null $name
      * @return string|null
      */
-    public function generateQueryFromFilter(?string $name) : ?string
+    public function generateQueryFromFilter(string $name = '', string $author = '') : ?string
     {
         $query = '';
         if(strlen($name)) {
             $query .= ('(' . $name . ' ) ');
         }
-        return $name;
+        if (strlen($author)) {
+
+            // check if external_account
+            $user_id = \ilObjUser::_lookupId($author);
+            $ext_account = \ilObjUser::_lookupExternalAccount($user_id);
+            if($ext_account) {
+                $author = $ext_account;
+            }
+
+            $author_query = 'OTExternalIdentity: ' . $author;
+            $query .= ( 'AND ' . $author_query .' ');
+        }
+        $this->logger->info('Parsed query is: ' . $query);
+        return $query;
     }
 }

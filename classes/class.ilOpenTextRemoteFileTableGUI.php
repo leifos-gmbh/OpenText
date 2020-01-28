@@ -26,6 +26,11 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
 	private const OT_FILTER_NAME = 'name';
 
     /**
+     * @var string
+     */
+	private const OT_FILTER_AUTHOR = 'author';
+
+    /**
      * @var int
      */
 	private const OT_LIMIT_SEARCH = 100;
@@ -123,6 +128,15 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
             $this->plugin->txt('remote_file_name')
         );
         $this->current_filter[self::OT_FILTER_NAME] = $status->getValue();
+
+        $author = $this->addFilterItemByMetaType(
+            self::OT_FILTER_AUTHOR,
+            \ilTable2GUI::FILTER_TEXT,
+            false,
+            $this->plugin->txt('remote_file_author')
+        );
+        $this->current_filter[self::OT_FILTER_AUTHOR] = $author->getValue();
+
     }
 
 	/**
@@ -228,6 +242,9 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
             }
 		    $files[] = $file;
 		}
+
+		//$this->connector->lookupRegions();
+
 		return $files;
 	}
 
@@ -237,7 +254,8 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
 	private function getFilteredFiles()
 	{
 	    $query = $this->utils->generateQueryFromFilter(
-	        $this->current_filter[self::OT_FILTER_NAME]
+	        $this->current_filter[self::OT_FILTER_NAME],
+            $this->current_filter[self::OT_FILTER_AUTHOR]
         );
 
 	    try {
