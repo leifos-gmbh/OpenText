@@ -5,6 +5,7 @@
 use Swagger\Client\Configuration;
 use Swagger\Client\Api\DefaultApi;
 use Swagger\Client\ApiException;
+use Swagger\Client\Model\ResultsData;
 use Swagger\Client\Model\V2ResponseElement;
 use Swagger\Client\Model\VersionsInfo;
 use GuzzleHttp\Client;
@@ -263,6 +264,56 @@ class ilOpenTextConnector
 		}
 	}
 
+    /**
+     * @param string $query
+     * @param int    $slice
+     * @param int    $limit
+     * @return ResultsData[]
+     * @throws ilOpenTextConnectionException
+     */
+	public function search(string $query, int $slice, int $limit)
+    {
+        $this->prepareApiCall();
+
+        try {
+            $this->lookupRegions(false);
+            $res = $this->api->search($query, $slice, null, 1, $limit);
+            $this->logger->dump($res);
+            return $res->getResults();
+        }
+        catch (ApiException $e) {
+            $this->logger->error('Api search failed with message: ' . $e->getMessage());
+            $this->logger->error($e->getResponseHeaders());
+            throw new \ilOpenTextConnectionException($e->getMessage());
+
+        }
+        catch (\RuntimeException | \LogicException $e) {
+            $this->logger->error('Api search failed with message: ' . $e->getMessage());
+            $this->logger->error($e->getTraceAsString());
+            throw new \ilOpenTextConnectionException($e->getMessage());
+        }
+    }
+
+    public function lookupRegions()
+    {
+        $this->prepareApiCall();
+        try {
+            $res = $this->api->lookupRegions(true);
+            $this->logger->dump($res);
+        }
+        catch (ApiException $e) {
+            $this->logger->error('Api lookupRegions failed with message: ' . $e->getMessage());
+            $this->logger->error($e->getResponseHeaders());
+            throw new \ilOpenTextConnectionException($e->getMessage());
+
+        }
+        catch (\RuntimeException | \LogicException $e) {
+            $this->logger->error('Api lookupRegions failed with message: ' . $e->getMessage());
+            $this->logger->error($e->getTraceAsString());
+            throw new \ilOpenTextConnectionException($e->getMessage());
+        }
+    }
+
 
 
 	/**
@@ -334,7 +385,6 @@ class ilOpenTextConnector
 				'verify' => false,
 				'allow_redirects' => true
 		]);
-
 
 		$config->setHost($this->settings->getUri());
 

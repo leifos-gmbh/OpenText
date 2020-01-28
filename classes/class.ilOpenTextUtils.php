@@ -103,4 +103,17 @@ class ilOpenTextUtils
 
         return $uri;
     }
+
+    /**
+     * @param string|null $name
+     * @return string|null
+     */
+    public function generateQueryFromFilter(?string $name) : ?string
+    {
+        $query = '';
+        if(strlen($name)) {
+            $query .= ('(' . $name . ' ) ');
+        }
+        return $name;
+    }
 }

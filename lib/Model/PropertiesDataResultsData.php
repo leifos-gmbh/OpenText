@@ -68,7 +68,9 @@ class PropertiesDataResultsData implements ModelInterface, ArrayAccess
         'external_modify_date' => '\DateTime',
         'external_source' => 'string',
         'size' => 'int',
-        'type' => 'int'
+        'type' => 'int',
+        'id' => 'int',
+        'name' => 'string'
     ];
 
     /**
@@ -87,7 +89,9 @@ class PropertiesDataResultsData implements ModelInterface, ArrayAccess
         'external_modify_date' => 'date-time',
         'external_source' => null,
         'size' => 'int32',
-        'type' => 'int32'
+        'type' => 'int32',
+        'id' => 'int32',
+        'name' => null
     ];
 
     /**
@@ -127,7 +131,9 @@ class PropertiesDataResultsData implements ModelInterface, ArrayAccess
         'external_modify_date' => 'external_modify_date',
         'external_source' => 'external_source',
         'size' => 'size',
-        'type' => 'type'
+        'type' => 'type',
+        'id' => 'id',
+        'name' => 'name'
     ];
 
     /**
@@ -146,7 +152,9 @@ class PropertiesDataResultsData implements ModelInterface, ArrayAccess
         'external_modify_date' => 'setExternalModifyDate',
         'external_source' => 'setExternalSource',
         'size' => 'setSize',
-        'type' => 'setType'
+        'type' => 'setType',
+        'id' => 'setId',
+        'name' => 'setName'
     ];
 
     /**
@@ -165,7 +173,9 @@ class PropertiesDataResultsData implements ModelInterface, ArrayAccess
         'external_modify_date' => 'getExternalModifyDate',
         'external_source' => 'getExternalSource',
         'size' => 'getSize',
-        'type' => 'getType'
+        'type' => 'getType',
+        'id' => 'getId',
+        'name' => 'getName'
     ];
 
     /**
@@ -239,6 +249,8 @@ class PropertiesDataResultsData implements ModelInterface, ArrayAccess
         $this->container['external_source'] = isset($data['external_source']) ? $data['external_source'] : null;
         $this->container['size'] = isset($data['size']) ? $data['size'] : null;
         $this->container['type'] = isset($data['type']) ? $data['type'] : null;
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        $this->container['name'] = isset($data['name']) ? $data['name'] : null;
     }
 
     /**
@@ -525,6 +537,54 @@ class PropertiesDataResultsData implements ModelInterface, ArrayAccess
     public function setType($type)
     {
         $this->container['type'] = $type;
+
+        return $this;
+    }
+
+    /**
+     * Gets id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->container['id'];
+    }
+
+    /**
+     * Sets id
+     *
+     * @param int $id The item's unique object ID
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->container['id'] = $id;
+
+        return $this;
+    }
+
+    /**
+     * Gets name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->container['name'];
+    }
+
+    /**
+     * Sets name
+     *
+     * @param string $name The name of the item
+     *
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->container['name'] = $name;
 
         return $this;
     }

@@ -14,6 +14,7 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 {
 	const TAB_SETTINGS = 'settings';
 	const TAB_FILES = 'files';
+	const TAB_SKYDOC = 'skydoc';
 
 
 	/**
@@ -83,6 +84,12 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 			$this->getPluginObject()->txt('tab_ot_files'),
 			$ctrl->getLinkTarget($this,'files')
 		);
+		$tabs->addTab(
+		    self::TAB_SKYDOC,
+            $this->getPluginObject()->txt('tab_ot_skydoc'),
+            $ctrl->getLinkTarget($this,'remoteFiles')
+        );
+
 		$tabs->activateTab($active_tab);
 	}
 	
@@ -230,6 +237,59 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 		$this->configure($form);
 	}
 
+    /**
+     * Show opentext synchronized files
+     */
+	protected function remoteFiles()
+    {
+        global $DIC;
+
+        $tpl = $DIC->ui()->mainTemplate();
+
+        $this->handleTabs(self::TAB_SKYDOC);
+
+        $table = $this->initRemoteFilesTable();
+        $table->parse();
+
+        $tpl->setContent($table->getHTML());
+    }
+
+    /**
+     * Apply filter
+     */
+    protected function remoteFilesApplyFilter()
+    {
+        $table = $this->initRemoteFilesTable();
+        $table->resetOffset();
+        $table->writeFilterToSession();
+
+        $this->remoteFiles();
+    }
+
+    /**
+     * Reset filter
+     */
+    protected function remoteFilesResetFilter()
+    {
+        $table = $this->initRemoteFilesTable();
+        $table->resetOffset();
+        $table->resetFilter();
+
+        $this->remoteFiles();
+    }
+
+    /**
+     * @return \ilOpenTextFileTableGUI
+     */
+    protected function initRemoteFilesTable() : \ilOpenTextRemoteFileTableGUI
+    {
+        $table = new ilOpenTextRemoteFileTableGUI($this, 'remoteFiles');
+        $table->init();
+        $table->setFilterCommand('remoteFilesApplyFilter');
+        $table->setResetCommand('remoteFilesResetFilter');
+
+        return $table;
+    }
 
 	/**
 	 * Show repository file objects
@@ -341,6 +401,8 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 		try {
 			// try to login
 			$connector->ping();
+
+			//$connector->search('DSC*');
 
 			// try to fetch base node
 			//$connector->fetchNode(ilOpenTextSettings::getInstance()->getBaseFolderId());

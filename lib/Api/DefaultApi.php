@@ -2213,26 +2213,300 @@ class DefaultApi
     }
 
     /**
+     * Operation lookupRegions
+     *
+     * Returns a list of regions.
+     *
+     * @param  bool $queryable queryable (required)
+     *
+     * @throws \Swagger\Client\ApiException on non-2xx response
+     * @throws \InvalidArgumentException
+     * @return \Swagger\Client\Model\RegionInfo
+     */
+    public function lookupRegions($queryable)
+    {
+        list($response) = $this->lookupRegionsWithHttpInfo($queryable);
+        return $response;
+    }
+
+    /**
+     * Operation lookupRegionsWithHttpInfo
+     *
+     * Returns a list of regions.
+     *
+     * @param  bool $queryable (required)
+     *
+     * @throws \Swagger\Client\ApiException on non-2xx response
+     * @throws \InvalidArgumentException
+     * @return array of \Swagger\Client\Model\RegionInfo, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function lookupRegionsWithHttpInfo($queryable)
+    {
+        $returnType = '\Swagger\Client\Model\RegionInfo';
+        $request = $this->lookupRegionsRequest($queryable);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? $e->getResponse()->getBody()->getContents() : null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    $response->getBody()
+                );
+            }
+
+            $responseBody = $response->getBody();
+            if ($returnType === '\SplFileObject') {
+                $content = $responseBody; //stream goes to serializer
+            } else {
+                $content = $responseBody->getContents();
+                if ($returnType !== 'string') {
+                    $content = json_decode($content);
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Swagger\Client\Model\RegionInfo',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation lookupRegionsAsync
+     *
+     * Returns a list of regions.
+     *
+     * @param  bool $queryable (required)
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function lookupRegionsAsync($queryable)
+    {
+        return $this->lookupRegionsAsyncWithHttpInfo($queryable)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation lookupRegionsAsyncWithHttpInfo
+     *
+     * Returns a list of regions.
+     *
+     * @param  bool $queryable (required)
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function lookupRegionsAsyncWithHttpInfo($queryable)
+    {
+        $returnType = '\Swagger\Client\Model\RegionInfo';
+        $request = $this->lookupRegionsRequest($queryable);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    $responseBody = $response->getBody();
+                    if ($returnType === '\SplFileObject') {
+                        $content = $responseBody; //stream goes to serializer
+                    } else {
+                        $content = $responseBody->getContents();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'lookupRegions'
+     *
+     * @param  bool $queryable (required)
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    protected function lookupRegionsRequest($queryable)
+    {
+        // verify the required parameter 'queryable' is set
+        if ($queryable === null || (is_array($queryable) && count($queryable) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $queryable when calling lookupRegions'
+            );
+        }
+
+        $resourcePath = '/api/v1/regions';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+        // path params
+        if ($queryable !== null) {
+            $resourcePath = str_replace(
+                '{' . 'queryable' . '}',
+                ObjectSerializer::toPathValue($queryable),
+                $resourcePath
+            );
+        }
+
+        // body params
+        $_tempBody = null;
+
+        if ($multipart) {
+            $headers = $this->headerSelector->selectHeadersForMultipart(
+                ['application/json']
+            );
+        } else {
+            $headers = $this->headerSelector->selectHeaders(
+                ['application/json'],
+                []
+            );
+        }
+
+        // for model (json/xml)
+        if (isset($_tempBody)) {
+            // $_tempBody is the method argument, if present
+            $httpBody = $_tempBody;
+            
+            if($headers['Content-Type'] === 'application/json') {
+                // \stdClass has no __toString(), so we should encode it manually
+                if ($httpBody instanceof \stdClass) {
+                    $httpBody = \GuzzleHttp\json_encode($httpBody);
+                }
+                // array has no __toString(), so we should encode it manually
+                if(is_array($httpBody)) {
+                    $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($httpBody));
+                }
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $multipartContents[] = [
+                        'name' => $formParamName,
+                        'contents' => $formParamValue
+                    ];
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif ($headers['Content-Type'] === 'application/json') {
+                $httpBody = \GuzzleHttp\json_encode($formParams);
+
+            } else {
+                // for HTTP post (form)
+                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+            }
+        }
+
+        // this endpoint requires API key authentication
+        $apiKey = $this->config->getApiKeyWithPrefix('OTCSTicket');
+        if ($apiKey !== null) {
+            $headers['OTCSTicket'] = $apiKey;
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        return new Request(
+            'GET',
+            $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
      * Operation search
      *
      * Returns search results
      *
      * @param  string $where LQL where clause (complex query mode) e.g. &#39;test or OTSubType: 189&#39;. (required)
-     * @param  string[] $options List of options for extra data to return. Available options are: { &#39;featured&#39;, &#39;facets&#39;, &#39;facets_raw&#39;, and &#39;highlight_summaries&#39; }. If &#39;facets&#39; or &#39;facets_raw&#39; are included in the option list, a facet section will be added to the return response. (required)
      * @param  int $slice ID of slice or list of slices. (optional)
      * @param  string $sort Sort region and direction ( e.g. &#39;desc_OTObjectSize&#39;. Ascending is default if not specified ). (optional)
      * @param  int $page Which page to start returning results from. (optional)
      * @param  int $limit Maximum number of items returned per page. (optional)
      * @param  string[] $select List of regions to return, e.g. { &#39;OTName&#39;,&#39;OTFileSize&#39;, ... } Adding a value in the above list will add a &#39;regions&#39; section in the return response. NOTE: The response structure under &#39;regions&#39; will change depending on the regions used in the query. When not specified the list of regions returned will be those defined in the template or query that was used to run the query. If no template or query is specified, the user&#39;s default template is used. (optional)
+     * @param  string[] $options List of options for extra data to return. Available options are: { &#39;featured&#39;, &#39;facets&#39;, &#39;facets_raw&#39;, and &#39;highlight_summaries&#39; }. If &#39;facets&#39; or &#39;facets_raw&#39; are included in the option list, a facet section will be added to the return response. (optional)
      * @param  int $query_id ID of a saved search query. (optional)
      *
      * @throws \Swagger\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return \Swagger\Client\Model\SearchInfo
      */
-    public function search($where, $options, $slice = null, $sort = null, $page = null, $limit = null, $select = null, $query_id = null)
+    public function search($where, $slice = null, $sort = null, $page = null, $limit = null, $select = null, $options = null, $query_id = null)
     {
-        list($response) = $this->searchWithHttpInfo($where, $options, $slice, $sort, $page, $limit, $select, $query_id);
+        list($response) = $this->searchWithHttpInfo($where, $slice, $sort, $page, $limit, $select, $options, $query_id);
         return $response;
     }
 
@@ -2242,22 +2516,22 @@ class DefaultApi
      * Returns search results
      *
      * @param  string $where LQL where clause (complex query mode) e.g. &#39;test or OTSubType: 189&#39;. (required)
-     * @param  string[] $options List of options for extra data to return. Available options are: { &#39;featured&#39;, &#39;facets&#39;, &#39;facets_raw&#39;, and &#39;highlight_summaries&#39; }. If &#39;facets&#39; or &#39;facets_raw&#39; are included in the option list, a facet section will be added to the return response. (required)
      * @param  int $slice ID of slice or list of slices. (optional)
      * @param  string $sort Sort region and direction ( e.g. &#39;desc_OTObjectSize&#39;. Ascending is default if not specified ). (optional)
      * @param  int $page Which page to start returning results from. (optional)
      * @param  int $limit Maximum number of items returned per page. (optional)
      * @param  string[] $select List of regions to return, e.g. { &#39;OTName&#39;,&#39;OTFileSize&#39;, ... } Adding a value in the above list will add a &#39;regions&#39; section in the return response. NOTE: The response structure under &#39;regions&#39; will change depending on the regions used in the query. When not specified the list of regions returned will be those defined in the template or query that was used to run the query. If no template or query is specified, the user&#39;s default template is used. (optional)
+     * @param  string[] $options List of options for extra data to return. Available options are: { &#39;featured&#39;, &#39;facets&#39;, &#39;facets_raw&#39;, and &#39;highlight_summaries&#39; }. If &#39;facets&#39; or &#39;facets_raw&#39; are included in the option list, a facet section will be added to the return response. (optional)
      * @param  int $query_id ID of a saved search query. (optional)
      *
      * @throws \Swagger\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return array of \Swagger\Client\Model\SearchInfo, HTTP status code, HTTP response headers (array of strings)
      */
-    public function searchWithHttpInfo($where, $options, $slice = null, $sort = null, $page = null, $limit = null, $select = null, $query_id = null)
+    public function searchWithHttpInfo($where, $slice = null, $sort = null, $page = null, $limit = null, $select = null, $options = null, $query_id = null)
     {
         $returnType = '\Swagger\Client\Model\SearchInfo';
-        $request = $this->searchRequest($where, $options, $slice, $sort, $page, $limit, $select, $query_id);
+        $request = $this->searchRequest($where, $slice, $sort, $page, $limit, $select, $options, $query_id);
 
         try {
             $options = $this->createHttpClientOption();
@@ -2324,20 +2598,20 @@ class DefaultApi
      * Returns search results
      *
      * @param  string $where LQL where clause (complex query mode) e.g. &#39;test or OTSubType: 189&#39;. (required)
-     * @param  string[] $options List of options for extra data to return. Available options are: { &#39;featured&#39;, &#39;facets&#39;, &#39;facets_raw&#39;, and &#39;highlight_summaries&#39; }. If &#39;facets&#39; or &#39;facets_raw&#39; are included in the option list, a facet section will be added to the return response. (required)
      * @param  int $slice ID of slice or list of slices. (optional)
      * @param  string $sort Sort region and direction ( e.g. &#39;desc_OTObjectSize&#39;. Ascending is default if not specified ). (optional)
      * @param  int $page Which page to start returning results from. (optional)
      * @param  int $limit Maximum number of items returned per page. (optional)
      * @param  string[] $select List of regions to return, e.g. { &#39;OTName&#39;,&#39;OTFileSize&#39;, ... } Adding a value in the above list will add a &#39;regions&#39; section in the return response. NOTE: The response structure under &#39;regions&#39; will change depending on the regions used in the query. When not specified the list of regions returned will be those defined in the template or query that was used to run the query. If no template or query is specified, the user&#39;s default template is used. (optional)
+     * @param  string[] $options List of options for extra data to return. Available options are: { &#39;featured&#39;, &#39;facets&#39;, &#39;facets_raw&#39;, and &#39;highlight_summaries&#39; }. If &#39;facets&#39; or &#39;facets_raw&#39; are included in the option list, a facet section will be added to the return response. (optional)
      * @param  int $query_id ID of a saved search query. (optional)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function searchAsync($where, $options, $slice = null, $sort = null, $page = null, $limit = null, $select = null, $query_id = null)
+    public function searchAsync($where, $slice = null, $sort = null, $page = null, $limit = null, $select = null, $options = null, $query_id = null)
     {
-        return $this->searchAsyncWithHttpInfo($where, $options, $slice, $sort, $page, $limit, $select, $query_id)
+        return $this->searchAsyncWithHttpInfo($where, $slice, $sort, $page, $limit, $select, $options, $query_id)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -2351,21 +2625,21 @@ class DefaultApi
      * Returns search results
      *
      * @param  string $where LQL where clause (complex query mode) e.g. &#39;test or OTSubType: 189&#39;. (required)
-     * @param  string[] $options List of options for extra data to return. Available options are: { &#39;featured&#39;, &#39;facets&#39;, &#39;facets_raw&#39;, and &#39;highlight_summaries&#39; }. If &#39;facets&#39; or &#39;facets_raw&#39; are included in the option list, a facet section will be added to the return response. (required)
      * @param  int $slice ID of slice or list of slices. (optional)
      * @param  string $sort Sort region and direction ( e.g. &#39;desc_OTObjectSize&#39;. Ascending is default if not specified ). (optional)
      * @param  int $page Which page to start returning results from. (optional)
      * @param  int $limit Maximum number of items returned per page. (optional)
      * @param  string[] $select List of regions to return, e.g. { &#39;OTName&#39;,&#39;OTFileSize&#39;, ... } Adding a value in the above list will add a &#39;regions&#39; section in the return response. NOTE: The response structure under &#39;regions&#39; will change depending on the regions used in the query. When not specified the list of regions returned will be those defined in the template or query that was used to run the query. If no template or query is specified, the user&#39;s default template is used. (optional)
+     * @param  string[] $options List of options for extra data to return. Available options are: { &#39;featured&#39;, &#39;facets&#39;, &#39;facets_raw&#39;, and &#39;highlight_summaries&#39; }. If &#39;facets&#39; or &#39;facets_raw&#39; are included in the option list, a facet section will be added to the return response. (optional)
      * @param  int $query_id ID of a saved search query. (optional)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function searchAsyncWithHttpInfo($where, $options, $slice = null, $sort = null, $page = null, $limit = null, $select = null, $query_id = null)
+    public function searchAsyncWithHttpInfo($where, $slice = null, $sort = null, $page = null, $limit = null, $select = null, $options = null, $query_id = null)
     {
         $returnType = '\Swagger\Client\Model\SearchInfo';
-        $request = $this->searchRequest($where, $options, $slice, $sort, $page, $limit, $select, $query_id);
+        $request = $this->searchRequest($where, $slice, $sort, $page, $limit, $select, $options, $query_id);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -2408,29 +2682,23 @@ class DefaultApi
      * Create request for operation 'search'
      *
      * @param  string $where LQL where clause (complex query mode) e.g. &#39;test or OTSubType: 189&#39;. (required)
-     * @param  string[] $options List of options for extra data to return. Available options are: { &#39;featured&#39;, &#39;facets&#39;, &#39;facets_raw&#39;, and &#39;highlight_summaries&#39; }. If &#39;facets&#39; or &#39;facets_raw&#39; are included in the option list, a facet section will be added to the return response. (required)
      * @param  int $slice ID of slice or list of slices. (optional)
      * @param  string $sort Sort region and direction ( e.g. &#39;desc_OTObjectSize&#39;. Ascending is default if not specified ). (optional)
      * @param  int $page Which page to start returning results from. (optional)
      * @param  int $limit Maximum number of items returned per page. (optional)
      * @param  string[] $select List of regions to return, e.g. { &#39;OTName&#39;,&#39;OTFileSize&#39;, ... } Adding a value in the above list will add a &#39;regions&#39; section in the return response. NOTE: The response structure under &#39;regions&#39; will change depending on the regions used in the query. When not specified the list of regions returned will be those defined in the template or query that was used to run the query. If no template or query is specified, the user&#39;s default template is used. (optional)
+     * @param  string[] $options List of options for extra data to return. Available options are: { &#39;featured&#39;, &#39;facets&#39;, &#39;facets_raw&#39;, and &#39;highlight_summaries&#39; }. If &#39;facets&#39; or &#39;facets_raw&#39; are included in the option list, a facet section will be added to the return response. (optional)
      * @param  int $query_id ID of a saved search query. (optional)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    protected function searchRequest($where, $options, $slice = null, $sort = null, $page = null, $limit = null, $select = null, $query_id = null)
+    protected function searchRequest($where, $slice = null, $sort = null, $page = null, $limit = null, $select = null, $options = null, $query_id = null)
     {
         // verify the required parameter 'where' is set
         if ($where === null || (is_array($where) && count($where) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $where when calling search'
-            );
-        }
-        // verify the required parameter 'options' is set
-        if ($options === null || (is_array($options) && count($options) === 0)) {
-            throw new \InvalidArgumentException(
-                'Missing the required parameter $options when calling search'
             );
         }
 
@@ -2442,17 +2710,6 @@ class DefaultApi
         $multipart = false;
 
 
-        // path params
-        if (is_array($options)) {
-            $options = ObjectSerializer::serializeCollection($options, 'csv');
-        }
-        if ($options !== null) {
-            $resourcePath = str_replace(
-                '{' . 'options' . '}',
-                ObjectSerializer::toPathValue($options),
-                $resourcePath
-            );
-        }
 
         // form params
         if ($where !== null) {
@@ -2477,6 +2734,10 @@ class DefaultApi
         // form params
         if ($select !== null) {
             $formParams['select'] = ObjectSerializer::toFormValue($select);
+        }
+        // form params
+        if ($options !== null) {
+            $formParams['options'] = ObjectSerializer::toFormValue($options);
         }
         // form params
         if ($query_id !== null) {

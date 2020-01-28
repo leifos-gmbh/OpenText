@@ -18,6 +18,7 @@ file_last_update#:#Last Update
 file_sync_status#:#Synchronization
 file_actions#:#Actions
 tab_ot_files#:#ILIAS File Objects
+tab_ot_skydoc#:#Skydoc Files
 file_repository#:#Deleted
 status_scheduled#:#Planned
 status_in_progress#:#In Progress
@@ -27,3 +28,5 @@ cron_synchronized_items#:#Number of synchronized files:
 ilias_file_table_filter_status_all#:#Show all
 ilias_file_table_filter_status_update#:#Reset Synchronization Status
 open_in_opentext#:#Show in Skydoc
+remote_file_name#:#Filename
+remote_file_author#:#Author
