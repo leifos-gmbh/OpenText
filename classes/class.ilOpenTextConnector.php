@@ -21,7 +21,8 @@ class ilOpenTextConnector
 	const OTXT_DOCUMENT_TYPE = 144;
 	const OTXT_FOLDER_TYPE = 0;
 	const OTXT_EXTERNAL_SOURCE_TYPE = 'file_system';
-	const OTXT_EXTERNAL_USER_TYPE = 'generic_userid';
+	const OTXT_EXTERNAL_USER_LOGIN_TYPE = 'generic_userid';
+    const OTXT_EXTERNAL_USER_LDAP_TYPE = 'ldap_name';
 
 	/**
 	 * @var null
@@ -138,6 +139,8 @@ class ilOpenTextConnector
 
 		    $create_date = new DateTime($version['date']);
 
+		    list($user_type, $username) = $this->parseUserInfo((int) $version['user_id']);
+
 			$res = $this->api->addDocument(
 				self::OTXT_DOCUMENT_TYPE,
 				$a_parent_id,
@@ -148,8 +151,8 @@ class ilOpenTextConnector
                 $create_date,
                 null,
                 self::OTXT_EXTERNAL_SOURCE_TYPE,
-                (string) $version['user_id'],
-                self::OTXT_EXTERNAL_USER_TYPE
+                $username,
+                $user_type
             );
 
 			$this->logger->dump($res, \ilLogLevel::DEBUG);
@@ -166,6 +169,26 @@ class ilOpenTextConnector
 			throw new \ilOpenTextConnectionException($e->getMessage());
 		}
 	}
+
+    /**
+     * @param int $user_id
+     * @return string[]
+     */
+	private function parseUserInfo(int $user_id = 0) : array
+    {
+        if(\ilObjUser::_lookupExternalAccount($user_id)) {
+            return [
+                self::OTXT_EXTERNAL_USER_LDAP_TYPE,
+                \ilObjUser::_lookupExternalAccount($user_id)
+            ];
+        }
+        else {
+            return [
+                self::OTXT_EXTERNAL_USER_LOGIN_TYPE,
+                \ilObjUser::_lookupLogin($user_id)
+            ];
+        }
+    }
 
     /**
      * @param string $a_name
@@ -239,6 +262,9 @@ class ilOpenTextConnector
 		$create_date = new DateTime($version['date']);
 
 		try {
+
+            list($user_type, $user_name) = $this->parseUserInfo((int) $version['user_id']);
+
             $res = $this->api->addVersion(
                 $a_document_id,
                 $file,
@@ -247,8 +273,8 @@ class ilOpenTextConnector
                 $create_date,
                 null,
                 self::OTXT_EXTERNAL_SOURCE_TYPE,
-                (string) $version['user_id'],
-                self::OTXT_EXTERNAL_USER_TYPE
+                $user_name,
+                $user_type
             );
             $this->logger->info($res);
 		}
