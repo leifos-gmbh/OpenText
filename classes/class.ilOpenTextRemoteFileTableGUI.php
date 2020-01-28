@@ -237,6 +237,9 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
 		    $file['author'] = $file_version->getData()->getProperties()->getExternalIdentity();
 
 		    $file['create_date'] = 0;
+
+		    $this->logger->dump($file_version->getData()->getProperties()->getExternalCreateDate());
+
 		    if ($file_version->getData()->getProperties()->getExternalCreateDate() instanceof \DateTime) {
                 $file['create_date'] = $file_version->getData()->getProperties()->getExternalCreateDate()->getTimestamp();
             }

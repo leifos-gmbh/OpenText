@@ -149,7 +149,7 @@ class ilOpenTextConnector
                 null,
                 null,
                 $create_date,
-                null,
+                $create_date,
                 self::OTXT_EXTERNAL_SOURCE_TYPE,
                 $username,
                 $user_type
@@ -271,7 +271,7 @@ class ilOpenTextConnector
                 null,
                 null,
                 $create_date,
-                null,
+                $create_date,
                 self::OTXT_EXTERNAL_SOURCE_TYPE,
                 $user_name,
                 $user_type
