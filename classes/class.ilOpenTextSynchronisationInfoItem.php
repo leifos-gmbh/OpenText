@@ -8,10 +8,10 @@ class ilOpenTextSynchronisationInfoItem
 {
 	const TABLE_ITEMS = 'evnt_evhk_otxt_items';
 
-	const STATUS_SCHEDULED = 0;
-	const STATUS_IN_PROGRESS = 1;
-	const STATUS_SYNCHRONISED = 2;
-	const STATUS_FAILURE = 3;
+	const STATUS_SCHEDULED = 1;
+	const STATUS_IN_PROGRESS = 2;
+	const STATUS_SYNCHRONISED = 3;
+	const STATUS_FAILURE = 4;
 
 	/**
 	 * @var ilDBInterface
