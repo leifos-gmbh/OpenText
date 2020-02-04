@@ -14,7 +14,7 @@ tbl_ot_settings_loglevel#:#Log-Level
 ot_ping#:#Connection Test
 success_connection#:#Successfully connected to REST-Api
 file_create_date#:#Creation Date
-file_last_update#:#Last Update
+file_last_update#:#Date of Synchronisation
 file_sync_status#:#Synchronization
 file_actions#:#Actions
 tab_ot_files#:#ILIAS File Objects

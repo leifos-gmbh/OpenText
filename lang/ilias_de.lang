@@ -14,7 +14,7 @@ tbl_ot_settings_loglevel#:#Log-Level
 ot_ping#:#Verbindungstest
 success_connection#:#Die Verbindung zur REST-Api konnte erfolgreich aufgebaut werden.
 file_create_date#:#Erstellungsdatum
-file_last_update#:#Letzte Aktualisierung
+file_last_update#:#Synchronisierungsdatum
 file_sync_status#:#Synchronisierung
 file_actions#:#Aktionen
 tab_ot_files#:#ILIAS-Dateiobjekte

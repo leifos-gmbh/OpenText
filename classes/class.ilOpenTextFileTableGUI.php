@@ -68,8 +68,8 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
         $this->addColumn('','');
 		$this->addColumn($this->lng->txt('title'), 'title','30%');
 		$this->addColumn($this->plugin->txt('file_create_date'),'cdate','15%');
-		$this->addColumn($this->plugin->txt('file_last_update'),'mdate','15%');
 		$this->addColumn($this->plugin->txt('file_sync_status'),'status_num','15%');
+        $this->addColumn($this->plugin->txt('file_last_update'),'mdate','15%');
 		$this->addColumn($this->plugin->txt('file_repository'),'in_repository','15%');
 		$this->addColumn($this->plugin->txt('file_actions'),'actions','10%');
 
@@ -240,7 +240,7 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 
 		$db = $DIC->database();
 
-		$fields = 'title, description, create_date cdate , obd.last_update mdate , deleted in_repository , status status_num, otxt_id ';
+		$fields = 'title, description, create_date cdate , otxt.last_update mdate , deleted in_repository , status status_num, otxt_id ';
 		$query_fields = 'select distinct(obd.obj_id),' . $fields;
 		$query_count = 'select count(distinct(obd.obj_id)) files, ' . $fields;
 

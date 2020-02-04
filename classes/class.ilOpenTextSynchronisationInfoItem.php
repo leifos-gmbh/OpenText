@@ -159,12 +159,11 @@ class ilOpenTextSynchronisationInfoItem
 	protected function create()
 	{
 		$query = 'insert into ' . self::TABLE_ITEMS . ' '.
-			'(obj_id, otxt_id, status, last_update) '.
+			'(obj_id, otxt_id, status) '.
 			'values( '.
 			$this->db->quote($this->getObjId(),'integer').', '.
 			$this->db->quote($this->getOpenTextId(),'integer'). ', '.
-			$this->db->quote($this->getStatus(),'integer'). ', '.
-			$this->db->now().' '.
+			$this->db->quote($this->getStatus(),'integer'). ' ' .
 			')';
 		$this->db->manipulate($query);
 	}
@@ -174,13 +173,22 @@ class ilOpenTextSynchronisationInfoItem
 	 */
 	protected function update()
 	{
-		$query = 'update ' . self::TABLE_ITEMS. ' '.
-			'set '.
-			'otxt_id = ' .$this->db->quote($this->getOpenTextId(),'integer'). ', '.
-			'status = ' . $this->db->quote($this->getStatus(),'integer') . ', '.
-			'last_update = '.$this->db->now() .' '.
-			'where obj_id = ' . $this->db->quote($this->getObjId(),'integer');
+	    if($this->status == self::STATUS_SYNCHRONISED) {
+            $query = 'update ' . self::TABLE_ITEMS. ' '.
+                'set '.
+                'otxt_id = ' .$this->db->quote($this->getOpenTextId(),'integer'). ', '.
+                'status = ' . $this->db->quote($this->getStatus(),'integer') . ', '.
+                'last_update = '.$this->db->now() .' '.
+                'where obj_id = ' . $this->db->quote($this->getObjId(),'integer');
+        }
+	    else {
+	        // keep the last_update date
+            $query = 'update ' . self::TABLE_ITEMS. ' '.
+                'set ' .
+                'otxt_id = ' . $this->db->quote($this->getOpenTextId(), 'integer') . ', ' .
+                'status = ' . $this->db->quote($this->getStatus(), 'integer') . ' ' .
+                'where obj_id = ' . $this->db->quote($this->getObjId(), 'integer');
+        }
 		$this->db->manipulate($query);
-
 	}
 }
