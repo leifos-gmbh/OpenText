@@ -90,10 +90,11 @@ class ilOpenTextPlugin extends ilEventHookPlugin
 			$a_parameter['obj_type'] == 'file' &&
 			array_key_exists('obj_id', $a_parameter)
 		) {
+
 			ilLoggerFactory::getLogger('otxt')->debug('Added new update command for obj_id ' . $a_parameter['obj_id']);
 			$info =  \ilOpenTextSynchronisationInfo::getInstance();
 			$item = $info->getItemForObjId($a_parameter['obj_id']);
-			$item->setStatus(ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED);
+			$item->determineAndSetStatus();
 			$item->save();
 		}
 	}

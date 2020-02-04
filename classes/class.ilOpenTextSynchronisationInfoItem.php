@@ -12,6 +12,7 @@ class ilOpenTextSynchronisationInfoItem
 	const STATUS_IN_PROGRESS = 2;
 	const STATUS_SYNCHRONISED = 3;
 	const STATUS_FAILURE = 4;
+	const STATUS_SYNC_DISABLED = 5;
 
 	/**
 	 * @var ilDBInterface
@@ -75,6 +76,9 @@ class ilOpenTextSynchronisationInfoItem
 			case self::STATUS_FAILURE:
 				$lang_key = 'status_failed';
 				break;
+            case self::STATUS_SYNC_DISABLED:
+                $lang_key = 'status_sync_disabled';
+                break;
 		}
 		return $lang_key;
 	}
@@ -136,6 +140,20 @@ class ilOpenTextSynchronisationInfoItem
 	{
 		return $this->status;
 	}
+
+    /**
+     * @throws ilDatabaseException
+     */
+	public function determineAndSetStatus()
+    {
+        $sync_items = \ilOpenTextUtils::getInstance()->readSynchronisableCategories();
+        if (\ilOpenTextSynchronisationInfo::getInstance()->isSynchronisationRequired($sync_items, $this->getObjId())) {
+            $this->setStatus(self::STATUS_SCHEDULED);
+        }
+        else {
+            $this->setStatus(self::STATUS_SYNC_DISABLED);
+        }
+    }
 
 	/**
 	 * Save entry

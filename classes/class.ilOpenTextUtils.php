@@ -27,6 +27,11 @@ class ilOpenTextUtils
     private static $instance = null;
 
     /**
+     * @var null | \ilDBInterface
+     */
+    private $db = null;
+
+    /**
      * @var null | \ilOpenTextPlugin
      */
     private $plugin = null;
@@ -45,6 +50,7 @@ class ilOpenTextUtils
 
         $this->plugin = \ilOpenTextPlugin::getInstance();
         $this->logger = $DIC->logger()->otxt();
+        $this->db = $DIC->database();
     }
 
     /**
@@ -128,5 +134,29 @@ class ilOpenTextUtils
         }
         $this->logger->info('Parsed query is: ' . $query);
         return $query;
+    }
+
+    /**
+     * @throws ilDatabaseException
+     * @return int[]
+     */
+    public function readSynchronisableCategories()
+    {
+        $query = 'select id from container_settings ' .
+            'where keyword = ' . $this->db->quote('cont_skydoc' , \ilDBConstants::T_TEXT);
+        $res = $this->db->query($query);
+
+        $category_obj_ids = [];
+        while ($row = $res->fetchRow(\ilDBConstants::FETCHMODE_OBJECT)) {
+            $category_obj_ids[] = $row->id;
+        }
+
+        // transfer to ref_id
+        $category_ref_ids = [];
+        foreach ($category_obj_ids as $category_ref_id) {
+            $refs = \ilObject::_getAllReferences($category_ref_id);
+            $category_ref_ids[] = end($refs);
+        }
+        return $category_ref_ids;
     }
 }

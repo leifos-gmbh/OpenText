@@ -120,6 +120,8 @@ class ilOpenTextSynchronisationInfo
 	 */
 	public function createMissingItems()
 	{
+	    $synchronisable_refs = \ilOpenTextUtils::getInstance()->readSynchronisableCategories();
+
 		$query = 'select distinct(obd.obj_id) from object_data obd '.
 			'join object_reference obr on obd.obj_id = obr.obj_id '.
 			'left join ' . self::TABLE_ITEMS . ' otxt on obd.obj_id = otxt.obj_id '.
@@ -129,14 +131,49 @@ class ilOpenTextSynchronisationInfo
 		$res = $this->db->query($query);
 		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
 
+		    if ($this->isSynchronisatonRequired($synchronisable_refs, $row->obj_id)) {
+		        $status = \ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED;
+            }
+		    else {
+		        $status = \ilOpenTextSynchronisationInfoItem::STATUS_SYNC_DISABLED;
+            }
+
 			$new_entry = new \ilOpenTextSynchronisationInfoItem(
 				$row->obj_id,
 				0,
-				\ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED
+                $status
 			);
 			$new_entry->save();
-			$this->logger->debug('Added new opentxt item for obj_id : ' . $row->obj_id);
+			$this->logger->debug('Added new opentxt item for obj_id : ' . $row->obj_id . ' with status: ' . $status);
 		}
 		$this->info_items_initialized = false;
 	}
+
+    /**
+     * @param int[] $synchronisable_items
+     * @param int $file_obj_id
+     * @return bool
+     */
+	public function isSynchronisationRequired(array $synchronisable_items, $file_obj_id)  : bool
+    {
+        global $DIC;
+
+        $tree = $DIC->repositoryTree();
+
+        foreach (\ilObject::_getAllReferences($file_obj_id) as $ref_id => $a_similar_ref_id) {
+            foreach ($synchronisable_items as $synchronisable_item) {
+                $relation = $tree->getRelation($synchronisable_item, $ref_id);
+                switch ($relation) {
+                    case \ilTree::RELATION_PARENT:
+                        $this->logger->notice('Relation is parent');
+                        return true;
+
+                    default:
+                        $this->logger->info('Current relation is: ' . $relation);
+                }
+            }
+        }
+        $this->logger->info('No parent sync item found');
+        return false;
+    }
 }
