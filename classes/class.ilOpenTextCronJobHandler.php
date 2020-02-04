@@ -286,7 +286,7 @@ class ilOpenTextCronJobHandler
             }
             catch(RuntimeException | LogicException $e) {
 			    $this->logger->warning('Cannot create initial file version: ' . $e->getMessage());
-			    return false;
+			    throw new \ilOpenTextConnectionException($e->getMessage());
             }
             catch(\ilOpenTextConnectionException $e) {
 			    throw $e;
