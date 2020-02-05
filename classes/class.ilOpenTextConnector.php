@@ -254,6 +254,7 @@ class ilOpenTextConnector
      * @param array          $version
      * @param \SplFileObject $file
      * @throws ilOpenTextConnectionException
+     * @throws ilOpenTextRuntimeException
      */
 	public function addVersion($a_document_id, \ilObjFile $ilfile, $version, \SplFileObject $file)
 	{
@@ -286,7 +287,7 @@ class ilOpenTextConnector
 		catch(\RuntimeException | \LogicException $e) {
 			$this->logger->error('Api add version failed with message: ' . $e->getMessage());
 			$this->logger->error($e->getTraceAsString());
-			throw new \ilOpenTextConnectionException($e->getMessage());
+			throw new \ilOpenTextRuntimeException($e->getMessage());
 		}
 	}
 

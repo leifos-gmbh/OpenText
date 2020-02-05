@@ -113,8 +113,13 @@ class ilOpenTextCronJobHandler
 				$this->createFirstVersion($item, $file);
 				$status_ok = true;
 			}
+			catch(\ilOpenTextRuntimeException $e) {
+                $this->logger->error('Create initial version failed with message: '  . $e->getMessage());
+			    $item->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_FAILURE);
+			    $item->save();
+			    return false;
+            }
 			catch(Exception $e) {
-				$this->logger->error('Create initial version failed with message: '  . $e->getMessage());
 				$item->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_FAILURE);
 				$item->save();
 				throw $e;
@@ -125,11 +130,16 @@ class ilOpenTextCronJobHandler
 			$this->synchronizeVersions($item, $file);
 			$status_ok = true;
 		}
+		catch(\ilOpenTextConnectionException $e) {
+            $this->logger->error('Version synchronization failed with message: ' . $e->getMessage());
+            $item->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_FAILURE);
+            $item->save();
+            throw $e;
+
+        }
 		catch(Exception $e) {
 			$this->logger->error('Version synchronization failed with message: ' . $e->getMessage());
-			$item->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_FAILURE);
-			$item->save();
-			throw $e;
+			$status_ok = false;
 		}
 		if($status_ok) {
             $item->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_SYNCHRONISED);
@@ -169,12 +179,7 @@ class ilOpenTextCronJobHandler
 				continue;
 			}
 			// add new version
-			try {
-				$this->createVersion($item, $file, $file_version);
-			}
-			catch(Exception $e) {
-				throw $e;
-			}
+            $this->createVersion($item, $file, $file_version);
 		}
 	}
 
@@ -214,6 +219,8 @@ class ilOpenTextCronJobHandler
 	 *
 	 * @param \ilOpenTextSynchronisationInfoItem $item
 	 * @param \ilObjFile $file
+     * @throws \ilOpenTextConnectionException
+     * @throws \ilOpenTextRuntimeException
 	 */
 	protected function createVersion(\ilOpenTextSynchronisationInfoItem $item, \ilObjFile $file, $file_version)
 	{
@@ -233,15 +240,15 @@ class ilOpenTextCronJobHandler
 			}
 
 		}
-		catch(\RuntimeException $e) {
+		catch (\RuntimeException $e) {
             // do not throw, since this would block the sync of other planned items
             $this->logger->warning('Cannot open file: ' . $file->getDirectory($file_version['version']).'/'.$name);
-            return false;
+            throw $e;
 		}
 		catch (\LogicException $e) {
             // do not throw, since this would block the sync of other planned items
             $this->logger->warning('Cannot open file: ' . $file->getDirectory($file_version['version']).'/'.$name);
-            return false;
+            throw new \RuntimeException($e->getMessage());
         }
 
 		try {
@@ -249,8 +256,12 @@ class ilOpenTextCronJobHandler
 		}
 		catch(ilOpenTextConnectionException $e) {
 			$this->logger->notice('Version creation failed with message: ' . $e->getMessage());
-			throw new \RuntimeException($e->getMessage());
+			throw $e;
 		}
+		catch(Exception $e) {
+            $this->logger->notice('Version creation failed with message: ' . $e->getMessage());
+            throw $e;
+        }
 		return true;
 
 	}
@@ -261,6 +272,7 @@ class ilOpenTextCronJobHandler
 	 * @param \ilObjFile $file
 	 * @return bool
 	 * @throws \ilOpenTextConnectionException
+     * @throws \ilOpenTextRuntimeException
 	 */
 	protected function createFirstVersion(\ilOpenTextSynchronisationInfoItem $item, \ilObjFile $file)
 	{
@@ -284,9 +296,9 @@ class ilOpenTextCronJobHandler
                 $item->setOpenTextId($new_document_id);
                 $item->save();
             }
-            catch(RuntimeException | LogicException $e) {
+            catch(\RuntimeException | \LogicException $e) {
 			    $this->logger->warning('Cannot create initial file version: ' . $e->getMessage());
-			    throw new \ilOpenTextConnectionException($e->getMessage());
+			    throw new \ilOpenTextRuntimeException($e->getMessage());
             }
             catch(\ilOpenTextConnectionException $e) {
 			    throw $e;

@@ -343,7 +343,7 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 
             $info_item_instance = $info_item->getItemForObjId($file_id);
             if($info_item_instance->getStatus() == \ilOpenTextSynchronisationInfoItem::STATUS_FAILURE) {
-                $info_item_instance->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED);
+                $info_item_instance->determineAndSetStatus();
                 $info_item_instance->save();
             }
         }

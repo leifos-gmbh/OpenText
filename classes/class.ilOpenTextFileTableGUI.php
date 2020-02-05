@@ -249,7 +249,8 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 			'from object_data obd '.
 			'join object_reference obr on obd.obj_id = obr.obj_id '.
 			'join ' . \ilOpenTextSynchronisationInfo::TABLE_ITEMS . ' otxt on obr.obj_id = otxt.obj_id '.
-			'where type = ' . $db->quote('file','text').' ';
+			'where type = ' . $db->quote('file','text').' ' .
+            'and otxt.status != ' . $db->quote(\ilOpenTextSynchronisationInfoItem::STATUS_SYNC_DISABLED, \ilDBConstants::T_INTEGER) . ' ';
 
 		if($this->current_filter[self::OT_FILTER_STATUS] >= \ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED) {
 

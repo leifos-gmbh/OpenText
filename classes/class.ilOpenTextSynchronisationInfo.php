@@ -131,12 +131,7 @@ class ilOpenTextSynchronisationInfo
 		$res = $this->db->query($query);
 		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
 
-		    if ($this->isSynchronisatonRequired($synchronisable_refs, $row->obj_id)) {
-		        $status = \ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED;
-            }
-		    else {
-		        $status = \ilOpenTextSynchronisationInfoItem::STATUS_SYNC_DISABLED;
-            }
+            $status = $this->isSynchronisationRequired($synchronisable_refs, $row->obj_id) ? \ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED : \ilOpenTextSynchronisationInfoItem::STATUS_SYNC_DISABLED;
 
 			$new_entry = new \ilOpenTextSynchronisationInfoItem(
 				$row->obj_id,
