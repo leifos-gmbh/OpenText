@@ -37,6 +37,11 @@ class ilOpenTextUtils
     private $plugin = null;
 
     /**
+     * @var null | \ilOpenTextSettings
+     */
+    private $settings = null;
+
+    /**
      * @var null | \ilLogger
      */
     private $logger = null;
@@ -49,6 +54,7 @@ class ilOpenTextUtils
         global $DIC;
 
         $this->plugin = \ilOpenTextPlugin::getInstance();
+        $this->settings = \ilOpenTextSettings::getInstance();
         $this->logger = $DIC->logger()->otxt();
         $this->db = $DIC->database();
     }
@@ -132,6 +138,10 @@ class ilOpenTextUtils
             $author_query = 'OTExternalIdentity: ' . $author;
             $query .= ( 'AND ' . $author_query .' ');
         }
+
+        // add location part
+        $query .= 'AND OTLocation:' . $this->settings->getBaseFolderId();
+
         $this->logger->info('Parsed query is: ' . $query);
         return $query;
     }
@@ -158,5 +168,41 @@ class ilOpenTextUtils
             $category_ref_ids[] = end($refs);
         }
         return $category_ref_ids;
+    }
+
+    /**
+     * @param SplFileObject $file
+     * @return SplFileObject
+     */
+    public function sanitizeFile(SplFileObject $file) : SplFileObject
+    {
+        $name = $file->getFilename();
+        $tmp_name = \ilUtil::ilTempnam();
+
+        copy(
+            $file->getPathname(),
+            $tmp_name
+        );
+
+        try {
+            $tmp_file = new SplTempFileObject($tmp_name);
+        }
+        catch (Exception $e) {
+            $this->logger->warning('Cannot create tem file object: ' . $e->getMessage());
+            throw $e;
+        }
+        return $tmp_file;
+    }
+
+    /**
+     * @param SplTempFileObject $file | null
+     */
+    public function removeTemporaryFile(SplTempFileObject $file = null)
+    {
+        if($file instanceof SplTempFileObject) {
+            $path = $file->getPathname();
+            unset($file);
+            unlink($path);
+        }
     }
 }
