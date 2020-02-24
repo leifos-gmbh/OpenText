@@ -282,10 +282,10 @@ class ilOpenTextConnector
 		$this->prepareApiCall();
 
 		$create_date = new DateTime($version['date']);
+        list($user_type, $user_name) = $this->parseUserInfo((int) $version['user_id']);
 
 		try {
 
-            list($user_type, $user_name) = $this->parseUserInfo((int) $version['user_id']);
 
             $res = $this->api->addVersion(
                 $a_document_id,
@@ -299,7 +299,10 @@ class ilOpenTextConnector
                 $user_type
             );
             $this->logger->info($res);
-		}
+
+
+
+        }
 		catch(ApiException $e) {
 			$this->logger->error('Api add version failed with message: ' . $e->getMessage());
 			$this->logger->error($e->getResponseHeaders());
@@ -310,7 +313,73 @@ class ilOpenTextConnector
 			$this->logger->error($e->getTraceAsString());
 			throw new \ilOpenTextRuntimeException($e->getMessage());
 		}
+
+		try {
+            $this->updateDocumentCategories(
+                $a_document_id,
+                $ilfile->getId(),
+                $user_name
+            );
+        }
+        catch(\Exception $e) {
+		    throw new \ilOpenTextRuntimeException($e->getMessage());
+        }
 	}
+
+    /**
+     * @param $document_id
+     * @param $ilias_file_id
+     * @param $username
+     * @throws ApiException
+     * @throws ilOpenTextConnectionException
+     */
+	protected function updateDocumentCategories($document_id, $ilias_file_id, $username)
+    {
+        $this->prepareApiCall();
+        try {
+            $this->api->deleteCategory($document_id, $this->settings->getDocumentId());
+            $this->api->deleteCategory($document_id, $this->settings->getDocumentInfoId());
+
+            $this->api->addCategory($document_id, $this->settings->getDocumentId());
+            $this->api->addCategory($document_id, $this->settings->getDocumentInfoId());
+
+            // document
+            $body_obj = new stdClass();
+            $document_manager_name = (string) $this->settings->getDocumentId() . '_' . (string) $this->settings->getDocumentManagerId();
+            $document_owner_name = (string) $this->settings->getDocumentId() . '_' . (string) $this->settings->getDocumentOwnerId();
+
+            $body_obj->$document_manager_name = $username;
+            $body_obj->$document_owner_name = $username;
+            $body = json_encode($body_obj);
+
+            $this->logger->dump($body);
+
+            $null = $this->api->updateCategory(
+                $document_id,
+                $this->settings->getDocumentId(),
+                $body
+            );
+
+            // document info
+            $body_obj = new stdClass();
+            $info_id_name = (string) $this->settings->getDocumentInfoId(). '_' . (string) $this->settings->getDocumentInfoIdId();
+            $body_obj->$info_id_name = $ilias_file_id;
+            $body = json_encode($body_obj);
+
+            $this->logger->dump($body);
+
+            $null = $this->api->updateCategory(
+                $document_id,
+                $this->settings->getDocumentInfoId(),
+                $body
+            );
+        }
+        catch (ApiException $e) {
+            $this->logger->error('Api category update failed with message: ' . $e->getMessage());
+            $this->logger->error($e->getResponseHeaders());
+            throw new \ilOpenTextConnectionException($e->getMessage());
+        }
+    }
 
     /**
      * @param string $query
