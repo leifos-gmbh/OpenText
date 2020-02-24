@@ -121,6 +121,7 @@ class ilOpenTextSynchronisationInfo
 	public function createMissingItems()
 	{
 	    $synchronisable_refs = \ilOpenTextUtils::getInstance()->readSynchronisableCategories();
+	    $disabled_refs = \ilOpenTextUtils::getInstance()->readDisabledCategories();
 
 		$query = 'select distinct(obd.obj_id) from object_data obd '.
 			'join object_reference obr on obd.obj_id = obr.obj_id '.
@@ -131,7 +132,12 @@ class ilOpenTextSynchronisationInfo
 		$res = $this->db->query($query);
 		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
 
-            $status = $this->isSynchronisationRequired($synchronisable_refs, $row->obj_id) ? \ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED : \ilOpenTextSynchronisationInfoItem::STATUS_SYNC_DISABLED;
+            $status = $this->isSynchronisationRequired(
+                $synchronisable_refs,
+                $disabled_refs,
+                $row->obj_id) ?
+                \ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED :
+                \ilOpenTextSynchronisationInfoItem::STATUS_SYNC_DISABLED;
 
 			$new_entry = new \ilOpenTextSynchronisationInfoItem(
 				$row->obj_id,
@@ -149,18 +155,29 @@ class ilOpenTextSynchronisationInfo
      * @param int $file_obj_id
      * @return bool
      */
-	public function isSynchronisationRequired(array $synchronisable_items, $file_obj_id)  : bool
+	public function isSynchronisationRequired(array $synchronisable_items, array $disabled_categories, $file_obj_id)  : bool
     {
         global $DIC;
 
         $tree = $DIC->repositoryTree();
 
         foreach (\ilObject::_getAllReferences($file_obj_id) as $ref_id => $a_similar_ref_id) {
+
+            // first check for disabled categories
+            foreach ($disabled_categories as $disabled_category) {
+                $relation = $tree->getRelation($disabled_category, $ref_id);
+                switch ($relation) {
+                    case \ilTree::RELATION_PARENT:
+                        $this->logger->info('Relation is parent => category sync disabled for ref_id: ' . $ref_id);
+                        return false;
+                }
+            }
+            // check for
             foreach ($synchronisable_items as $synchronisable_item) {
                 $relation = $tree->getRelation($synchronisable_item, $ref_id);
                 switch ($relation) {
                     case \ilTree::RELATION_PARENT:
-                        $this->logger->notice('Relation is parent');
+                        $this->logger->info('Relation is parent =>  category sync is enabled for ref_id:' . $ref_id );
                         return true;
 
                     default:

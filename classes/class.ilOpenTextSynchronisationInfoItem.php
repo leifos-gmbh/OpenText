@@ -147,7 +147,8 @@ class ilOpenTextSynchronisationInfoItem
 	public function determineAndSetStatus()
     {
         $sync_items = \ilOpenTextUtils::getInstance()->readSynchronisableCategories();
-        if (\ilOpenTextSynchronisationInfo::getInstance()->isSynchronisationRequired($sync_items, $this->getObjId())) {
+        $disabled_items = \ilOpenTextUtils::getInstance()->readDisabledCategories();
+        if (\ilOpenTextSynchronisationInfo::getInstance()->isSynchronisationRequired($sync_items, $disabled_items, $this->getObjId())) {
             $this->setStatus(self::STATUS_SCHEDULED);
         }
         else {

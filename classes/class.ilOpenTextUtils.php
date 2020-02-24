@@ -171,6 +171,29 @@ class ilOpenTextUtils
     }
 
     /**
+     * @return int[]
+     */
+    public function readDisabledCategories() : array
+    {
+        $query = 'select id from container_settings ' .
+            'where keyword = ' . $this->db->quote('cont_skydoc_disabled' , \ilDBConstants::T_TEXT);
+        $res = $this->db->query($query);
+
+        $category_obj_ids = [];
+        while ($row = $res->fetchRow(\ilDBConstants::FETCHMODE_OBJECT)) {
+            $category_obj_ids[] = $row->id;
+        }
+
+        // transfer to ref_id
+        $category_ref_ids = [];
+        foreach ($category_obj_ids as $category_ref_id) {
+            $refs = \ilObject::_getAllReferences($category_ref_id);
+            $category_ref_ids[] = end($refs);
+        }
+        return $category_ref_ids;
+    }
+
+    /**
      * @param SplFileObject $file
      * @return SplFileObject
      */
