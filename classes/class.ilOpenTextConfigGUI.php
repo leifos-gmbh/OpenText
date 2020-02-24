@@ -195,6 +195,35 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 		$domain->setValue($settings->getDomain());
 		$form->addItem($domain);
 
+		// meta data categories
+        $md = new \ilFormSectionHeaderGUI();
+        $md->setTitle($this->getPluginObject()->txt('tbl_ot_settings_section_md'));
+        $form->addItem($md);
+
+        $category_document = new \ilNumberInputGUI($this->getPluginObject()->txt('tbl_ot_settings_cat_document'), 'document');
+        $category_document->setRequired(true);
+        $category_document->setValue($settings->getDocumentId());
+        $form->addItem($category_document);
+
+        $field_manager = new \ilNumberInputGUI($this->getPluginObject()->txt('tbl_ot_settings_field_manager'), 'document_manager');
+        $field_manager->setRequired(true);
+        $field_manager->setValue($settings->getDocumentManagerId());
+        $form->addItem($field_manager);
+
+        $field_owner = new \ilNumberInputGUI($this->getPluginObject()->txt('tbl_ot_settings_field_owner'),'document_owner');
+        $field_owner->setRequired(true);
+        $field_owner->setValue($settings->getDocumentOwnerId());
+        $form->addItem($field_owner);
+
+        $category_document_info = new \ilNumberInputGUI($this->getPluginObject()->txt('tbl_ot_settings_cat_document_info'), 'document_info');
+        $category_document_info->setRequired(true);
+        $category_document_info->setValue($settings->getDocumentInfoId());
+        $form->addItem($category_document_info);
+
+        $field_id = new \ilNumberInputGUI($this->getPluginObject()->txt('tbl_ot_settings_field_id'), 'document_info_id');
+        $field_id->setRequired(true);
+        $field_id->setValue($settings->getDocumentInfoIdId());
+        $form->addItem($field_id);
 
 		return $form;
 	}
@@ -225,6 +254,13 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 			}
 			$settings->setDomain($form->getInput('domain'));
 			$settings->setBaseFolderId((int) $form->getInput('base_folder'));
+
+			$settings->setDocumentId((int) $form->getInput('document'));
+			$settings->setDocumentManagerId((int) $form->getInput('document_manager'));
+			$settings->setDocumentOwnerId((int) $form->getInput('document_owner'));
+			$settings->setDocumentInfoId((int) $form->getInput('document_info'));
+			$settings->setDocumentInfoIdId((int) $form->getInput('document_info_id'));
+
 			$settings->save();
 			ilUtil::sendSuccess($lng->txt('settings_saved'),true);
 			$ilCtrl->redirect($this,'configure');

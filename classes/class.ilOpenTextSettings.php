@@ -65,6 +65,31 @@ class ilOpenTextSettings
 	 */
 	private $base_folder_id = 0;
 
+    /**
+     * @var int
+     */
+	private $document_id = 0;
+
+    /**
+     * @var int
+     */
+	private $document_manager_id = 0;
+
+    /**
+     * @var int
+     */
+	private $document_owner_id = 0;
+
+    /**
+     * @var int
+     */
+	private $document_info_id = 0;
+
+    /**
+     * @var int
+     */
+	private $document_info_id_id = 0;
+
 	/**
 	 * ilOpenTextSettings constructor.
 	 */
@@ -212,6 +237,87 @@ class ilOpenTextSettings
 		return $this->base_folder_id;
 	}
 
+    /**
+     * @return int
+     */
+    public function getDocumentId() : int
+    {
+        return $this->document_id;
+    }
+
+    /**
+     * @param int $document_id
+     */
+    public function setDocumentId(int $document_id) : void
+    {
+        $this->document_id = $document_id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDocumentManagerId() : int
+    {
+        return $this->document_manager_id;
+    }
+
+    /**
+     * @param int $document_manager_id
+     */
+    public function setDocumentManagerId(int $document_manager_id) : void
+    {
+        $this->document_manager_id = $document_manager_id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDocumentOwnerId() : int
+    {
+        return $this->document_owner_id;
+    }
+
+    /**
+     * @param int $document_owner_id
+     */
+    public function setDocumentOwnerId(int $document_owner_id) : void
+    {
+        $this->document_owner_id = $document_owner_id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDocumentInfoId() : int
+    {
+        return $this->document_info_id;
+    }
+
+    /**
+     * @param int $document_info_id
+     */
+    public function setDocumentInfoId(int $document_info_id) : void
+    {
+        $this->document_info_id = $document_info_id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDocumentInfoIdId() : int
+    {
+        return $this->document_info_id_id;
+    }
+
+    /**
+     * @param int $document_info_id_id
+     */
+    public function setDocumentInfoIdId(int $document_info_id_id) : void
+    {
+        $this->document_info_id_id = $document_info_id_id;
+    }
+
+
 
 	/**
 	 * save settings
@@ -226,6 +332,11 @@ class ilOpenTextSettings
 		$this->getStorage()->set('password', $this->getPassword());
 		$this->getStorage()->set('domain', $this->getDomain());
 		$this->getStorage()->set('base_folder_id', $this->getBaseFolderId());
+		$this->getStorage()->set('document', $this->getDocumentId());
+		$this->getStorage()->set('document_manager', $this->getDocumentManagerId());
+		$this->getStorage()->set('document_owner', $this->getDocumentOwnerId());
+		$this->getStorage()->set('document_info', $this->getDocumentInfoId());
+		$this->getStorage()->set('document_info_id', $this->getDocumentInfoIdId());
 	}
 
 	/**
@@ -249,6 +360,11 @@ class ilOpenTextSettings
 		$this->setPassword((string) $this->getStorage()->get('password'));
 		$this->setDomain((string) $this->getStorage()->get('domain'));
 		$this->setBaseFolderId((string) $this->getStorage()->get('base_folder_id'));
+		$this->setDocumentId((int) $this->getStorage()->get('document'));
+		$this->setDocumentManagerId((int) $this->getStorage()->get('document_manager'));
+		$this->setDocumentOwnerId((int) $this->getStorage()->get('document_owner'));
+		$this->setDocumentInfoId((int) $this->getStorage()->get('document_info'));
+		$this->setDocumentInfoIdId((int) $this->getStorage()->get('document_info_id'));
 	}
 
 

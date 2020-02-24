@@ -222,7 +222,15 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
 		foreach ($file_versions as $index => $file_version) {
 
 		    $file['id'] = $file_version->getData()->getProperties()->getId();
+		    try {
+		        $connector = \ilOpenTextConnector::getInstance();
+		        $categories = $connector->getCategories($file['id']);
+		        $this->logger->dump($categories);
 
+            }
+            catch (Exception $e) {
+
+            }
 		    if(preg_match('/^[0-9]+\_/',$file_version->getData()->getProperties()->getName()) === 1) {
 
 		        $parts = explode('_', $file_version->getData()->getProperties()->getName(),2);

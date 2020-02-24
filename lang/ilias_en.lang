@@ -30,3 +30,9 @@ ilias_file_table_filter_status_update#:#Reset Synchronization Status
 open_in_opentext#:#Show in Skydoc
 remote_file_name#:#Filename
 remote_file_author#:#Author
+tbl_ot_settings_section_md#:#Category Meta Data
+tbl_ot_settings_cat_document#:#Category "Document" ID
+tbl_ot_settings_field_manager#:#"Document -> Manager" ID
+tbl_ot_settings_field_owner#:#"Document -> Owner" ID
+tbl_ot_settings_cat_document_info#:#Category "Document Info" ID
+tbl_ot_settings_field_id#:#"Document Info -> Id" ID

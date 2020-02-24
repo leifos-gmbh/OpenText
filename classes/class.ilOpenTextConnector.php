@@ -5,6 +5,7 @@
 use Swagger\Client\Configuration;
 use Swagger\Client\Api\DefaultApi;
 use Swagger\Client\ApiException;
+use Swagger\Client\Model\CategoriesInfo;
 use Swagger\Client\Model\ResultsData;
 use Swagger\Client\Model\V2ResponseElement;
 use Swagger\Client\Model\VersionsInfo;
@@ -120,6 +121,26 @@ class ilOpenTextConnector
 			throw new \ilOpenTextConnectionException($e->getMessage());
 		}
 	}
+
+    /**
+     * @param $node_id
+     * @return CategoriesInfo
+     * @throws ilOpenTextConnectionException
+     */
+	public function getCategories($node_id)
+    {
+        $this->prepareApiCall();
+
+        try {
+            $res = $this->api->getCategory($node_id);
+            return $res;
+        }
+        catch (Exception $e) {
+            $this->logger->error('Api get category failed with message: ' . $e->getMessage());
+            $this->logger->error($e->getResponseHeaders());
+            throw new \ilOpenTextConnectionException($e->getMessage());
+        }
+    }
 
     /**
      * @param string         $a_name
