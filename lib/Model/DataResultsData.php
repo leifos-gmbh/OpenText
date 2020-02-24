@@ -57,7 +57,8 @@ class DataResultsData implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'properties' => '\Swagger\Client\Model\PropertiesDataResultsData'
+        'properties' => '\Swagger\Client\Model\PropertiesDataResultsData',
+        'versions' => '\Swagger\Client\Model\VersionsDataResultsData'
     ];
 
     /**
@@ -66,7 +67,8 @@ class DataResultsData implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'properties' => null
+        'properties' => null,
+        'versions' => null
     ];
 
     /**
@@ -96,7 +98,8 @@ class DataResultsData implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'properties' => 'properties'
+        'properties' => 'properties',
+        'versions' => 'versions'
     ];
 
     /**
@@ -105,7 +108,8 @@ class DataResultsData implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'properties' => 'setProperties'
+        'properties' => 'setProperties',
+        'versions' => 'setVersions'
     ];
 
     /**
@@ -114,7 +118,8 @@ class DataResultsData implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'properties' => 'getProperties'
+        'properties' => 'getProperties',
+        'versions' => 'getVersions'
     ];
 
     /**
@@ -178,6 +183,7 @@ class DataResultsData implements ModelInterface, ArrayAccess
     public function __construct(array $data = null)
     {
         $this->container['properties'] = isset($data['properties']) ? $data['properties'] : null;
+        $this->container['versions'] = isset($data['versions']) ? $data['versions'] : null;
     }
 
     /**
@@ -224,6 +230,30 @@ class DataResultsData implements ModelInterface, ArrayAccess
     public function setProperties($properties)
     {
         $this->container['properties'] = $properties;
+
+        return $this;
+    }
+
+    /**
+     * Gets versions
+     *
+     * @return \Swagger\Client\Model\VersionsDataResultsData
+     */
+    public function getVersions()
+    {
+        return $this->container['versions'];
+    }
+
+    /**
+     * Sets versions
+     *
+     * @param \Swagger\Client\Model\VersionsDataResultsData $versions versions
+     *
+     * @return $this
+     */
+    public function setVersions($versions)
+    {
+        $this->container['versions'] = $versions;
 
         return $this;
     }

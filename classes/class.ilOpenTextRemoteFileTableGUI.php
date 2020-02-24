@@ -234,14 +234,15 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
 		        $file['obj_id'] = 0;
 		        $file['name'] = $file_version->getData()->getProperties()->getName();
             }
-		    $file['author'] = $file_version->getData()->getProperties()->getExternalIdentity();
+            if(strlen($file_version->getData()->getVersions()->getFileName())) {
+                $file['name'] = $file_version->getData()->getVersions()->getFileName();
+            }
+            $file['author'] = $file_version->getData()->getProperties()->getExternalIdentity();
 
-		    $file['create_date'] = 0;
 
-		    $this->logger->dump($file_version->getData()->getProperties()->getExternalCreateDate());
-
-		    if ($file_version->getData()->getProperties()->getExternalCreateDate() instanceof \DateTime) {
-                $file['create_date'] = $file_version->getData()->getProperties()->getExternalCreateDate()->getTimestamp();
+            $file['create_date'] = 0;
+		    if($file_version->getData()->getVersions()->getFileCreateDate() instanceof DateTime) {
+		        $file['create_date'] = $file_version->getData()->getVersions()->getFileCreateDate()->getTimestamp();
             }
 		    $files[] = $file;
 		}
