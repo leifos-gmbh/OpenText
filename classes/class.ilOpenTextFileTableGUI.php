@@ -66,11 +66,12 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
         $this->initFilter();
 
         $this->addColumn('','');
-		$this->addColumn($this->lng->txt('title'), 'title','30%');
+		$this->addColumn($this->lng->txt('title'), 'title','25%');
+		$this->addColumn($this->plugin->txt('tbl_remote_files_skydoc_id'),'otxt_id', '10%');
 		$this->addColumn($this->plugin->txt('file_create_date'),'cdate','15%');
 		$this->addColumn($this->plugin->txt('file_sync_status'),'status_num','15%');
         $this->addColumn($this->plugin->txt('file_last_update'),'mdate','15%');
-		$this->addColumn($this->plugin->txt('file_repository'),'in_repository','15%');
+		$this->addColumn($this->plugin->txt('file_repository'),'in_repository','10%');
 		$this->addColumn($this->plugin->txt('file_actions'),'actions','10%');
 
 
@@ -116,6 +117,13 @@ class ilOpenTextFileTableGUI extends ilTable2GUI
 	public function fillRow($file)
 	{
 	    $this->tpl->setVariable('VAL_ID', $file['obj_id']);
+
+	    if($file['otxt_id']) {
+	        $this->tpl->setCurrentBlock('with_link');
+	        $this->tpl->setVariable('SKYDOC_LINK', \ilOpenTextUtils::getInstance()->generateOpenTextDirectLink($file['otxt_id']));
+	        $this->tpl->setVariable('SKYDOC_NAME', (string) $file['otxt_id']);
+	        $this->tpl->parseCurrentBlock();
+        }
 
 		$refs = $this->getReferences($file['obj_id']);
 		if(!count($refs)) {
