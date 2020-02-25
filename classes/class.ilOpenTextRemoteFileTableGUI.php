@@ -1,6 +1,7 @@
 <?php
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
+use Swagger\Client\Model\VersionsDataResultsData;
 
 /**
  * Remote File object table gui
@@ -242,21 +243,24 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
 		        $file['obj_id'] = 0;
 		        $file['name'] = $file_version->getData()->getProperties()->getName();
             }
-            if(strlen($file_version->getData()->getVersions()->getFileName())) {
+
+		    // overwrite with version info, if available
+            if (
+                $file_version->getData()->getVersions() instanceof VersionsDataResultsData &&
+                strlen($file_version->getData()->getVersions()->getFileName())
+            ) {
                 $file['name'] = $file_version->getData()->getVersions()->getFileName();
             }
             $file['author'] = $file_version->getData()->getProperties()->getExternalIdentity();
-
-
             $file['create_date'] = 0;
-		    if($file_version->getData()->getVersions()->getFileCreateDate() instanceof DateTime) {
+
+		    if(
+		        $file_version->getData()->getVersions() instanceof VersionsDataResultsData &&
+		        $file_version->getData()->getVersions()->getFileCreateDate() instanceof DateTime) {
 		        $file['create_date'] = $file_version->getData()->getVersions()->getFileCreateDate()->getTimestamp();
             }
 		    $files[] = $file;
 		}
-
-		//$this->connector->lookupRegions();
-
 		return $files;
 	}
 

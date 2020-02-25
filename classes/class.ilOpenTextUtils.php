@@ -140,7 +140,8 @@ class ilOpenTextUtils
         }
 
         // add location part
-        $query .= 'AND OTLocation:' . $this->settings->getBaseFolderId();
+        $query .= 'AND OTLocation:' . $this->settings->getBaseFolderId(). ' ';
+        $query .= 'AND OTSubType:' . \ilOpenTextConnector::OTXT_DOCUMENT_TYPE. ' ';
 
         $this->logger->info('Parsed query is: ' . $query);
         return $query;
