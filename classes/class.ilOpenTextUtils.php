@@ -120,7 +120,7 @@ class ilOpenTextUtils
      * @param string|null $name
      * @return string|null
      */
-    public function generateQueryFromFilter(string $name = '', string $author = '') : ?string
+    public function generateQueryFromFilter(string $name = '', string $author = '', \ilDate $from = null, \ilDate $until = null) : ?string
     {
         $query = '';
         if(strlen($name)) {
@@ -143,6 +143,12 @@ class ilOpenTextUtils
         $query .= 'AND OTLocation:' . $this->settings->getBaseFolderId(). ' ';
         $query .= 'AND OTSubType:' . \ilOpenTextConnector::OTXT_DOCUMENT_TYPE. ' ';
 
+        if ($from instanceof \ilDate) {
+            $query .= 'AND OTExternalCreateDate: >='.$from->get(IL_CAL_FKT_DATE, 'Ymd'). ' ';
+        }
+        if ($until instanceof \ilDate) {
+            $query .= 'AND OTExternalCreateDate: <='.$until->get(IL_CAL_FKT_DATE, 'Ymd'). ' ';
+        }
         $this->logger->info('Parsed query is: ' . $query);
         return $query;
     }

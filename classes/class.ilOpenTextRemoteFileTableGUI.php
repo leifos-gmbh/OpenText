@@ -29,6 +29,11 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
     /**
      * @var string
      */
+	private const OT_FILTER_CREATION = 'creation';
+
+    /**
+     * @var string
+     */
 	private const OT_FILTER_AUTHOR = 'author';
 
     /**
@@ -96,7 +101,7 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
         $this->initFilter();
 
         $this->addColumn('','');
-		$this->addColumn($this->lng->txt('title'), 'title','40%');
+		$this->addColumn($this->plugin->txt('remote_file_name'), 'title','40%');
 		$this->addColumn($this->plugin->txt('tbl_remote_files_skydoc_id'),'id', '10%');
 		$this->addColumn($this->plugin->txt('file_create_date'),'cdate','20%');
 		$this->addColumn($this->plugin->txt('remote_file_author'),'author','20%');
@@ -131,6 +136,14 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
             $this->plugin->txt('remote_file_name')
         );
         $this->current_filter[self::OT_FILTER_NAME] = $status->getValue();
+
+        $creation = $this->addFilterItemByMetaType(
+            self::OT_FILTER_CREATION,
+            \ilTable2GUI::FILTER_DATE_RANGE,
+            false,
+            $this->plugin->txt('file_create_date')
+        );
+        $this->current_filter[self::OT_FILTER_CREATION] = $creation->getValue();
 
         $author = $this->addFilterItemByMetaType(
             self::OT_FILTER_AUTHOR,
@@ -275,9 +288,17 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
 	 */
 	private function getFilteredFiles()
 	{
+	    $from = $until = null;
+        if (is_array($this->current_filter[self::OT_FILTER_CREATION])) {
+            $from = $this->current_filter[self::OT_FILTER_CREATION]['from'];
+            $until = $this->current_filter[self::OT_FILTER_CREATION]['to'];
+        }
+
 	    $query = $this->utils->generateQueryFromFilter(
 	        $this->current_filter[self::OT_FILTER_NAME],
-            $this->current_filter[self::OT_FILTER_AUTHOR]
+            $this->current_filter[self::OT_FILTER_AUTHOR],
+            $from,
+            $until
         );
 
 	    try {
