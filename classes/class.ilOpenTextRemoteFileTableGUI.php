@@ -112,6 +112,7 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
 
 		$this->determineOffsetAndOrder();
 		$this->setSelectAllCheckbox('remote_file_id');
+		$this->setEnableNumInfo(true);
 
 	}
 
@@ -261,6 +262,7 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
             }
 		    $files[] = $file;
 		}
+		$this->setMaxCount(count($files));
 		return $files;
 	}
 

@@ -9,6 +9,7 @@ use Swagger\Client\Model\AuthenticationInfo;
  * Config gui
  *
  * @author Stefan Meyer <smeyer.ilias@gmx.de>
+ * @ilCtrl_isCalledBy: ilOpenTextConfigGUI: ilObjFileAccessSettingsGUI
  */
 class ilOpenTextConfigGUI extends ilPluginConfigGUI
 {
@@ -16,6 +17,10 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 	const TAB_FILES = 'files';
 	const TAB_SKYDOC = 'skydoc';
 
+    /**
+     * @var bool
+     */
+    private $is_plugin_context = true;
 
 	/**
 	 * @var \ilLogger
@@ -39,8 +44,28 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 		$this->ctrl = $DIC->ctrl();
 	}
 
+	public function executeCommand()
+    {
+        // @dirty hack
+        // if the plugin object is not initialised this call comes from ilObjFileAccessSettingsGUI
+        if ($this->plugin_object instanceof \ilPlugin) {
+            $this->is_plugin_context = true;
+            return parent::executeCommand();
+        }
+        $this->is_plugin_context = false;
+        $this->setPluginObject(\ilOpenTextPlugin::getInstance());
+        $next_class = $this->ctrl->getNextClass($this);
+        $cmd = $this->ctrl->getCmd(self::TAB_FILES);
 
-	/**
+        switch ($next_class) {
+
+            default:
+                $this->$cmd();
+                break;
+        }
+    }
+
+    /**
 	* Handles all commands, default is "configure"
 	*/
 	public function performCommand($cmd)
@@ -69,29 +94,66 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 	 */
 	protected function handleTabs(string $active_tab)
 	{
-		global $DIC;
+	    if ($this->is_plugin_context) {
+	        return $this->handlePluginTabs($active_tab);
+        }
+	    else {
+	        return $this->handleFileAdministrationTabs($active_tab);
+        }
+	}
 
-		$tabs = $DIC->tabs();
-		$ctrl = $DIC->ctrl();
+    /**
+     * @param string $active_tab
+     */
+	protected function handleFileAdministrationTabs(string  $active_tab)
+    {
+        global $DIC;
 
-		$tabs->addTab(
-			self::TAB_SETTINGS,
-			$this->getPluginObject()->txt('tab_ot_settings'),
-			$ctrl->getLinkTarget($this,'configure')
-		);
-		$tabs->addTab(
-			self::TAB_FILES,
-			$this->getPluginObject()->txt('tab_ot_files'),
-			$ctrl->getLinkTarget($this,'files')
-		);
-		$tabs->addTab(
-		    self::TAB_SKYDOC,
+        $tabs = $DIC->tabs();
+        $ctrl = $DIC->ctrl();
+
+        $tabs->addSubTab(
+            self::TAB_FILES,
+            $this->getPluginObject()->txt('tab_ot_files'),
+            $ctrl->getLinkTarget($this,'files')
+        );
+        $tabs->addSubTab(
+            self::TAB_SKYDOC,
             $this->getPluginObject()->txt('tab_ot_skydoc'),
             $ctrl->getLinkTarget($this,'remoteFiles')
         );
 
-		$tabs->activateTab($active_tab);
-	}
+        $tabs->activateSubTab($active_tab);
+    }
+
+    /**
+     * @param string $active_tab
+     */
+	protected function handlePluginTabs(string $active_tab)
+    {
+        global $DIC;
+
+        $tabs = $DIC->tabs();
+        $ctrl = $DIC->ctrl();
+
+        $tabs->addTab(
+            self::TAB_SETTINGS,
+            $this->getPluginObject()->txt('tab_ot_settings'),
+            $ctrl->getLinkTarget($this,'configure')
+        );
+        $tabs->addTab(
+            self::TAB_FILES,
+            $this->getPluginObject()->txt('tab_ot_files'),
+            $ctrl->getLinkTarget($this,'files')
+        );
+        $tabs->addTab(
+            self::TAB_SKYDOC,
+            $this->getPluginObject()->txt('tab_ot_skydoc'),
+            $ctrl->getLinkTarget($this,'remoteFiles')
+        );
+
+        $tabs->activateTab($active_tab);
+    }
 	
 	/**
 	 * Show settings screen
