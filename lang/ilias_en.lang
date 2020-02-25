@@ -36,3 +36,4 @@ tbl_ot_settings_field_manager#:#"Document -> Manager" ID
 tbl_ot_settings_field_owner#:#"Document -> Owner" ID
 tbl_ot_settings_cat_document_info#:#Category "Document Info" ID
 tbl_ot_settings_field_id#:#"Document Info -> Id" ID
+tbl_remote_files_skydoc_id#:#Skydoc-ID

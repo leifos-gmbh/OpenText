@@ -97,8 +97,9 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
 
         $this->addColumn('','');
 		$this->addColumn($this->lng->txt('title'), 'title','40%');
-		$this->addColumn($this->plugin->txt('file_create_date'),'cdate','25%');
-		$this->addColumn($this->plugin->txt('remote_file_author'),'author','25%');
+		$this->addColumn($this->plugin->txt('tbl_remote_files_skydoc_id'),'id', '10%');
+		$this->addColumn($this->plugin->txt('file_create_date'),'cdate','20%');
+		$this->addColumn($this->plugin->txt('remote_file_author'),'author','20%');
 		$this->addColumn($this->plugin->txt('file_actions'),'actions','10%');
 
 
@@ -148,6 +149,9 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
 	{
 
 	    $this->tpl->setVariable('VAL_ID', $file['id']);
+
+	    $this->tpl->setVariable('SKYDOC_LINK', \ilOpenTextUtils::getInstance()->generateOpenTextDirectLink($file['id']));
+	    $this->tpl->setVariable('SKYDOC_NAME', $file['id']);
 
         $refs = $this->getReferences($file['obj_id']);
         if (!count($refs)) {
