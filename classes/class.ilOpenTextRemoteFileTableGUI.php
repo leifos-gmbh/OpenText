@@ -119,7 +119,6 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
 		$this->determineOffsetAndOrder();
 		$this->setSelectAllCheckbox('remote_file_id');
 		$this->setEnableNumInfo(true);
-
 	}
 
     /**
@@ -160,7 +159,6 @@ class ilOpenTextRemoteFileTableGUI extends ilTable2GUI
 	 */
 	public function fillRow($file)
 	{
-
 	    $this->tpl->setVariable('VAL_ID', $file['id']);
 
 	    $this->tpl->setVariable('SKYDOC_LINK', \ilOpenTextUtils::getInstance()->generateOpenTextDirectLink($file['id']));

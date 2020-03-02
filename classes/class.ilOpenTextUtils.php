@@ -178,6 +178,24 @@ class ilOpenTextUtils
     }
 
     /**
+     * @param int[] $ids
+     */
+    public function resetSyncStatus(array $ids)
+    {
+        foreach ($ids as $id) {
+
+            $obj_id = \ilObject::_lookupObjId($id);
+
+            $query = 'delete from container_settings ' .
+                'where id = ' . $this->db->quote($obj_id, \ilDBConstants::T_INTEGER) . ' and ( ' .
+                'keyword = ' . $this->db->quote(\ilObjectServiceSettingsGUI::PL_SKYDOC, \ilDBConstants::T_TEXT) .' or ' .
+                'keyword = ' . $this->db->quote(\ilObjectServiceSettingsGUI::PL_SKYDOC_DISABLED, \ilDBConstants::T_TEXT) .
+                ')';
+            $this->db->manipulate($query);
+        }
+    }
+
+    /**
      * @return int[]
      */
     public function readDisabledCategories() : array

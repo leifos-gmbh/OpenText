@@ -37,3 +37,8 @@ tbl_ot_settings_field_owner#:#"Document -> Owner" ID
 tbl_ot_settings_cat_document_info#:#Category "Document Info" ID
 tbl_ot_settings_field_id#:#"Document Info -> Id" ID
 tbl_remote_files_skydoc_id#:#Skydoc-ID
+tab_released_containers#:#Synchronisierungsstatus
+released_container_status#:#Status
+reset_sync_status#:#Status zurücksetzen
+status_active_sync#:#Synchronisierung aktiviert
+status_inactive_sync#:#Synchronisierung inaktiv (Vererbung unterbrochen)

@@ -14,6 +14,7 @@ use Swagger\Client\Model\AuthenticationInfo;
 class ilOpenTextConfigGUI extends ilPluginConfigGUI
 {
 	const TAB_SETTINGS = 'settings';
+	const TAB_RELEASED_CONTAINERS = 'released';
 	const TAB_FILES = 'files';
 	const TAB_SKYDOC = 'skydoc';
 
@@ -113,6 +114,11 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
         $ctrl = $DIC->ctrl();
 
         $tabs->addSubTab(
+            self::TAB_RELEASED_CONTAINERS,
+            $this->getPluginObject()->txt('tab_released_containers'),
+            $this->ctrl->getLinkTarget($this,'released')
+        );
+        $tabs->addSubTab(
             self::TAB_FILES,
             $this->getPluginObject()->txt('tab_ot_files'),
             $ctrl->getLinkTarget($this,'files')
@@ -140,6 +146,11 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
             self::TAB_SETTINGS,
             $this->getPluginObject()->txt('tab_ot_settings'),
             $ctrl->getLinkTarget($this,'configure')
+        );
+        $tabs->addTab(
+            self::TAB_RELEASED_CONTAINERS,
+            $this->getPluginObject()->txt('tab_released_containers'),
+            $this->ctrl->getLinkTarget($this, 'released')
         );
         $tabs->addTab(
             self::TAB_FILES,
@@ -334,6 +345,57 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
 		ilUtil::sendFailure($error);
 		$this->configure($form);
 	}
+
+    /**
+     * show table of released containers
+     */
+	protected function released()
+    {
+        global $DIC;
+
+        $tpl = $DIC->ui()->mainTemplate();
+
+        $this->handleTabs(self::TAB_RELEASED_CONTAINERS);
+
+        $table = $this->initReleasedContainerTable();
+        $table->setObjects([5279]);
+        $table->parse();
+
+        $tpl->setContent($table->getHTML());
+    }
+
+    /**
+     *
+     */
+    protected function resetSyncStatus()
+    {
+        global $DIC;
+
+        $lng = $DIC->language();
+        $ctrl = $DIC->ctrl();
+
+       if (empty($_POST['id'])) {
+           \ilUtil::sendFailure($lng->txt('select_one'),true);
+           $ctrl->redirect($this, 'released');
+           return;
+       }
+
+       \ilOpenTextUtils::getInstance()->resetSyncStatus($_POST['id']);
+       \ilUtil::sendSuccess($lng->txt('settings_saved'),true);
+       $ctrl->redirect($this,'released');
+       return;
+    }
+
+    /**
+     * @return ilOpenTextReleasedContainerTableGUI
+     */
+    protected function initReleasedContainerTable() : \ilOpenTextReleasedContainerTableGUI
+    {
+        $table = new \ilOpenTextReleasedContainerTableGUI($this, 'released');
+        $table->init();
+        $table->enableObjectPath(true);
+        return $table;
+    }
 
     /**
      * Show opentext synchronized files
