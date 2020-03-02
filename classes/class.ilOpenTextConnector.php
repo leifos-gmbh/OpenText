@@ -156,6 +156,7 @@ class ilOpenTextConnector
 
 		$a_parent_id = $this->buildParentFolders($ilfile->getId());
 
+		$document_id  = 0;
 		try {
 
 		    $create_date = new DateTime($version['date']);
@@ -178,17 +179,25 @@ class ilOpenTextConnector
 
 			$this->logger->dump($res, \ilLogLevel::DEBUG);
 
-			// debug
-            #$res_versions = $this->getVersions($res->getResults()->getData()->getProperties()->getId());
-            #$this->logger->dump($res_versions);
-
-			return $res->getResults()->getData()->getProperties()->getId();
+            $document_id = $res->getResults()->getData()->getProperties()->getId();
 		}
 		catch(Exception $e) {
 			$this->logger->error('Api add document failed with message: ' . $e->getMessage());
 			$this->logger->error($e->getResponseHeaders());
 			throw new \ilOpenTextConnectionException($e->getMessage());
 		}
+
+		try {
+            $this->updateDocumentCategories(
+                $document_id,
+                $ilfile->getId(),
+                $username
+            );
+        }
+        catch(\Exception $e) {
+            throw new \ilOpenTextRuntimeException($e->getMessage());
+        }
+		return $document_id;
 	}
 
     /**
