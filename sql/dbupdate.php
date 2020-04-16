@@ -61,7 +61,7 @@ if(!$ilDB->tableExists('evnt_evhk_otxt_path')) {
 
 ?>
 
-<#3>
+<#4>
 <?php
 
 if($ilDB->tableExists('evnt_evhk_otxt_path')) {
