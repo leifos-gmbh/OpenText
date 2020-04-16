@@ -56,7 +56,7 @@ if(!$ilDB->tableExists('evnt_evhk_otxt_path')) {
 
 <#3>
 <?php
-
+;
 // dummy because of error
 
 ?>
