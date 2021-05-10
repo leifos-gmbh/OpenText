@@ -12,64 +12,65 @@ use Swagger\Client\HeaderSelector;
 
 class ilOpenTextAuthHeaderSelector extends HeaderSelector
 {
-	const X_WWW_URL_ENCODED = 'application/x-www-form-urlencoded';
+    const X_WWW_URL_ENCODED = 'application/x-www-form-urlencoded';
 
 
 
-	/**
-	 * @param string[] $accept
-	 * @param string[] $contentTypes
-	 * @return array
-	 */
-	public function selectHeaders($accept, $contentTypes)
-	{
-		$headers = [];
+    /**
+     * @param string[] $accept
+     * @param string[] $contentTypes
+     * @return array
+     */
+    public function selectHeaders($accept, $contentTypes)
+    {
+        $headers = [];
 
-		$accept = $this->selectAcceptHeader($accept);
-		if ($accept !== null) {
-			$headers['Accept'] = $accept;
-		}
+        $accept = $this->selectAcceptHeader($accept);
+        if ($accept !== null) {
+            $headers['Accept'] = $accept;
+        }
 
-		$headers['Content-Type'] = $this->selectContentTypeHeader($contentTypes);
-		return $headers;
-	}
+        $headers['Content-Type'] = $this->selectContentTypeHeader($contentTypes);
+        return $headers;
+    }
 
-	/**
-	 * @param string[] $accept
-	 * @return array
-	 */
-	public function selectHeadersForMultipart($accept)
-	{
-		$headers = $this->selectHeaders($accept, []);
+    /**
+     * @param string[] $accept
+     * @return array
+     */
+    public function selectHeadersForMultipart($accept)
+    {
+        $headers = $this->selectHeaders($accept, []);
 
-		unset($headers['Content-Type']);
-		return $headers;
-	}
+        unset($headers['Content-Type']);
+        return $headers;
+    }
 
-	/**
-	 * Return the header 'Accept' based on an array of Accept provided
-	 *
-	 * @param string[] $accept Array of header
-	 *
-	 * @return string Accept (e.g. application/json)
-	 */
-	private function selectAcceptHeader($accept)
-	{
-		if (count($accept) === 0 || (count($accept) === 1 && $accept[0] === '')) {
-			return null;
-		} elseif (preg_grep("/application\/json/i", $accept)) {
-			return 'application/json';
-		} else {
-			return implode(',', $accept);
-		}
-	}
+    /**
+     * Return the header 'Accept' based on an array of Accept provided
+     *
+     * @param string[] $accept Array of header
+     *
+     * @return string Accept (e.g. application/json)
+     */
+    private function selectAcceptHeader(array $accept) : ?string
+    {
+        if (count($accept) === 0 || (count($accept) === 1 && $accept[0] === '')) {
+            return null;
+        } elseif (preg_grep("/application\/json/i", $accept)) {
+            return 'application/json';
+        } else {
+            return implode(',', $accept);
+        }
+    }
 
 
-	/**
-	 * @return string|void
-	 */
-	private function selectContentTypeHeader($contentType) : string
-	{
-		return self::X_WWW_URL_ENCODED;
-	}
+    /**
+     * @param string[] $contentType
+     * @return string|void
+     */
+    private function selectContentTypeHeader(array $contentType) : string
+    {
+        return self::X_WWW_URL_ENCODED;
+    }
 }

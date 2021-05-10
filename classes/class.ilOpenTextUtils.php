@@ -62,9 +62,9 @@ class ilOpenTextUtils
     /**
      * @return \ilOpenTextUtils
      */
-    public static function getInstance()
+    public static function getInstance() : ilOpenTextUtils
     {
-        if(!self::$instance instanceof \ilOpenTextUtils) {
+        if (!self::$instance instanceof \ilOpenTextUtils) {
             self::$instance = new self();
         }
         return self::$instance;
@@ -123,7 +123,7 @@ class ilOpenTextUtils
     public function generateQueryFromFilter(string $name = '', string $author = '', \ilDate $from = null, \ilDate $until = null) : ?string
     {
         $query = '';
-        if(strlen($name)) {
+        if (strlen($name)) {
             $query .= ('(' . $name . ' ) ');
         }
         if (strlen($author)) {
@@ -131,23 +131,23 @@ class ilOpenTextUtils
             // check if external_account
             $user_id = \ilObjUser::_lookupId($author);
             $ext_account = \ilObjUser::_lookupExternalAccount($user_id);
-            if($ext_account) {
+            if ($ext_account) {
                 $author = $ext_account;
             }
 
             $author_query = 'OTExternalIdentity: ' . $author;
-            $query .= ( 'AND ' . $author_query .' ');
+            $query .= ('AND ' . $author_query . ' ');
         }
 
         // add location part
-        $query .= 'AND OTLocation:' . $this->settings->getBaseFolderId(). ' ';
-        $query .= 'AND OTSubType:' . \ilOpenTextConnector::OTXT_DOCUMENT_TYPE. ' ';
+        $query .= 'AND OTLocation:' . $this->settings->getBaseFolderId() . ' ';
+        $query .= 'AND OTSubType:' . \ilOpenTextConnector::OTXT_DOCUMENT_TYPE . ' ';
 
         if ($from instanceof \ilDate) {
-            $query .= 'AND OTExternalCreateDate: >='.$from->get(IL_CAL_FKT_DATE, 'Ymd'). ' ';
+            $query .= 'AND OTExternalCreateDate: >=' . $from->get(IL_CAL_FKT_DATE, 'Ymd') . ' ';
         }
         if ($until instanceof \ilDate) {
-            $query .= 'AND OTExternalCreateDate: <='.$until->get(IL_CAL_FKT_DATE, 'Ymd'). ' ';
+            $query .= 'AND OTExternalCreateDate: <=' . $until->get(IL_CAL_FKT_DATE, 'Ymd') . ' ';
         }
         $this->logger->info('Parsed query is: ' . $query);
         return $query;
@@ -157,10 +157,10 @@ class ilOpenTextUtils
      * @throws ilDatabaseException
      * @return int[]
      */
-    public function readSynchronisableCategories()
+    public function readSynchronisableCategories() : array
     {
         $query = 'select id from container_settings ' .
-            'where keyword = ' . $this->db->quote('cont_skydoc' , \ilDBConstants::T_TEXT);
+            'where keyword = ' . $this->db->quote('cont_skydoc', \ilDBConstants::T_TEXT);
         $res = $this->db->query($query);
 
         $category_obj_ids = [];
@@ -183,12 +183,11 @@ class ilOpenTextUtils
     public function resetSyncStatus(array $ids)
     {
         foreach ($ids as $id) {
-
             $obj_id = \ilObject::_lookupObjId($id);
 
             $query = 'delete from container_settings ' .
                 'where id = ' . $this->db->quote($obj_id, \ilDBConstants::T_INTEGER) . ' and ( ' .
-                'keyword = ' . $this->db->quote(\ilObjectServiceSettingsGUI::PL_SKYDOC, \ilDBConstants::T_TEXT) .' or ' .
+                'keyword = ' . $this->db->quote(\ilObjectServiceSettingsGUI::PL_SKYDOC, \ilDBConstants::T_TEXT) . ' or ' .
                 'keyword = ' . $this->db->quote(\ilObjectServiceSettingsGUI::PL_SKYDOC_DISABLED, \ilDBConstants::T_TEXT) .
                 ')';
             $this->db->manipulate($query);
@@ -201,7 +200,7 @@ class ilOpenTextUtils
     public function readDisabledCategories() : array
     {
         $query = 'select id from container_settings ' .
-            'where keyword = ' . $this->db->quote('cont_skydoc_disabled' , \ilDBConstants::T_TEXT);
+            'where keyword = ' . $this->db->quote('cont_skydoc_disabled', \ilDBConstants::T_TEXT);
         $res = $this->db->query($query);
 
         $category_obj_ids = [];
@@ -221,6 +220,7 @@ class ilOpenTextUtils
     /**
      * @param SplFileObject $file
      * @return SplFileObject
+     * @throws Exception
      */
     public function sanitizeFile(SplFileObject $file) : SplFileObject
     {
@@ -234,8 +234,7 @@ class ilOpenTextUtils
 
         try {
             $tmp_file = new SplTempFileObject($tmp_name);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->logger->warning('Cannot create tem file object: ' . $e->getMessage());
             throw $e;
         }
@@ -243,11 +242,11 @@ class ilOpenTextUtils
     }
 
     /**
-     * @param SplTempFileObject $file | null
+     * @param null|SplTempFileObject $file
      */
     public function removeTemporaryFile(SplTempFileObject $file = null)
     {
-        if($file instanceof SplTempFileObject) {
+        if ($file instanceof SplTempFileObject) {
             $path = $file->getPathname();
             unset($file);
             unlink($path);

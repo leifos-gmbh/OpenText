@@ -23,7 +23,7 @@ class ilOpenTextReleasedContainerTableGUI extends \ilObjectTableGUI
     /**
      * @var null | \ilOpenTextPlugin
      */
-    private $plugin  = null;
+    private $plugin = null;
 
     /**
      * @var null | ilDBInterface
@@ -43,8 +43,8 @@ class ilOpenTextReleasedContainerTableGUI extends \ilObjectTableGUI
 
     /**
      * ilOpenTextReleasedContainerTableGUI constructor.
-     * @param $a_parent_obj
-     * @param $a_parent_cmd
+     * @param object $a_parent_obj
+     * @param string $a_parent_cmd
      */
     public function __construct($a_parent_obj, $a_parent_cmd)
     {
@@ -93,8 +93,7 @@ class ilOpenTextReleasedContainerTableGUI extends \ilObjectTableGUI
 
         if ($set['status'] == self::CONT_SYKDOC_ENABLED) {
             $this->tpl->setVariable('TXT_STATUS', $this->plugin->txt('status_active_sync'));
-        }
-        else {
+        } else {
             $this->tpl->setVariable('TXT_STATUS', $this->plugin->txt('status_inactive_sync'));
         }
     }
@@ -121,7 +120,8 @@ class ilOpenTextReleasedContainerTableGUI extends \ilObjectTableGUI
             $set[$counter]['status'] = \ilContainer::_lookupContainerSetting(
                 $set[$counter]['obj_id'],
                 ilObjectServiceSettingsGUI::PL_SKYDOC,
-                false) ?
+                false
+            ) ?
                 self::CONT_SYKDOC_ENABLED :
                 self::CONT_SKYDOC_DISABLED
             ;
@@ -144,7 +144,6 @@ class ilOpenTextReleasedContainerTableGUI extends \ilObjectTableGUI
 
         $objects = [];
         while ($row = $res->fetchRow(\ilDBConstants::FETCHMODE_OBJECT)) {
-
             $refs = \ilObject::_getAllReferences($row->id);
             $ref = end($refs);
 
@@ -154,6 +153,4 @@ class ilOpenTextReleasedContainerTableGUI extends \ilObjectTableGUI
         }
         $this->setObjects($objects);
     }
-
-
 }

@@ -11,6 +11,4 @@
  */
 class ilOpenTextRuntimeException extends ilException
 {
-
-
 }

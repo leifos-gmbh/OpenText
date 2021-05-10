@@ -10,232 +10,231 @@
  */
 class ilOpenTextSettings
 {
-	const SETTINGS_MODULE = 'xopentext';
+    const SETTINGS_MODULE = 'xopentext';
 
-	const OCTS_HEADER_TICKET_NAME = 'OTCSTicket';
+    const OCTS_HEADER_TICKET_NAME = 'OTCSTicket';
 
-	/**
-	 * @var \ilOpenTextSettings
-	 */
-	private static $instance = null;
+    /**
+     * @var \ilOpenTextSettings
+     */
+    private static $instance = null;
 
 
-	/**
-	 * @var \ilSetting
-	 */
-	private $storage = null;
+    /**
+     * @var \ilSetting
+     */
+    private $storage = null;
 
-	/**
-	 * @var bool
-	 */
-	private $active = false;
-
-	/**
-	 * @var int
-	 */
-	private $log_level = \ilLogLevel::OFF;
-
-	/**
-	 * @var string
-	 */
-	private $log_file = '';
-
-	/**
-	 * @var string
-	 */
-	private $uri = '';
-
-	/**
-	 * @var string
-	 */
-	private $username = '';
-
-	/**
-	 * @var string
-	 */
-	private $password = '';
-
-	/**
-	 * @var string
-	 */
-	private $domain = '';
-
-	/**
-	 * @var int
-	 */
-	private $base_folder_id = 0;
+    /**
+     * @var bool
+     */
+    private $active = false;
 
     /**
      * @var int
      */
-	private $document_id = 0;
+    private $log_level = \ilLogLevel::OFF;
+
+    /**
+     * @var string
+     */
+    private $log_file = '';
+
+    /**
+     * @var string
+     */
+    private $uri = '';
+
+    /**
+     * @var string
+     */
+    private $username = '';
+
+    /**
+     * @var string
+     */
+    private $password = '';
+
+    /**
+     * @var string
+     */
+    private $domain = '';
 
     /**
      * @var int
      */
-	private $document_manager_id = 0;
+    private $base_folder_id = 0;
 
     /**
      * @var int
      */
-	private $document_owner_id = 0;
+    private $document_id = 0;
 
     /**
      * @var int
      */
-	private $document_info_id = 0;
+    private $document_manager_id = 0;
 
     /**
      * @var int
      */
-	private $document_info_id_id = 0;
+    private $document_owner_id = 0;
 
-	/**
-	 * ilOpenTextSettings constructor.
-	 */
-	private function __construct()
-	{
-		$this->storage = new \ilSetting(self::SETTINGS_MODULE);
-		$this->loadFromDb();
-	}
+    /**
+     * @var int
+     */
+    private $document_info_id = 0;
 
-	/**
-	 * @return ilOpenTextSettings
-	 */
-	public static function getInstance() : ilOpenTextSettings
-	{
-		if(!self::$instance instanceof ilOpenTextSettings)
-		{
-			self::$instance = new self();
-		}
-		return self::$instance;
-	}
+    /**
+     * @var int
+     */
+    private $document_info_id_id = 0;
 
-	public function setActive(bool $a_status)
-	{
-		$this->active = $a_status;
-	}
+    /**
+     * ilOpenTextSettings constructor.
+     */
+    private function __construct()
+    {
+        $this->storage = new \ilSetting(self::SETTINGS_MODULE);
+        $this->loadFromDb();
+    }
 
-	/**
-	 * @return bool
-	 */
-	public function isActive() : bool
-	{
-		return $this->active;
-	}
+    /**
+     * @return ilOpenTextSettings
+     */
+    public static function getInstance() : ilOpenTextSettings
+    {
+        if (!self::$instance instanceof ilOpenTextSettings) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
-	/**
-	 * @return int
-	 */
-	public function getLogLevel() : int
-	{
-		return $this->log_level;
-	}
+    public function setActive(bool $a_status) : void
+    {
+        $this->active = $a_status;
+    }
 
-	/**
-	 * @param int $level
-	 */
-	public function setLogLevel(int $level)
-	{
-		$this->log_level = $level;
-	}
+    /**
+     * @return bool
+     */
+    public function isActive() : bool
+    {
+        return $this->active;
+    }
 
-	/**
-	 * @param $a_file
-	 */
-	public function setLogFile($a_file)
-	{
-		$this->log_file = $a_file;
-	}
+    /**
+     * @return int
+     */
+    public function getLogLevel() : int
+    {
+        return $this->log_level;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getLogFile() : string
-	{
-		return $this->log_file;
-	}
+    /**
+     * @param int $level
+     */
+    public function setLogLevel(int $level) : void
+    {
+        $this->log_level = $level;
+    }
+
+    /**
+     * @param string $a_file
+     */
+    public function setLogFile(string $a_file) : void
+    {
+        $this->log_file = $a_file;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogFile() : string
+    {
+        return $this->log_file;
+    }
 
 
-	/**
-	 * @param string $a_uri
-	 */
-	public function setUri(string $a_uri)
-	{
-		$this->uri = $a_uri;
-	}
+    /**
+     * @param string $a_uri
+     */
+    public function setUri(string $a_uri) : void
+    {
+        $this->uri = $a_uri;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getUri() : string
-	{
-		return $this->uri;
-	}
+    /**
+     * @return string
+     */
+    public function getUri() : string
+    {
+        return $this->uri;
+    }
 
-	/**
-	 * @param string $a_username
-	 */
-	public function setUsername(string $a_username)
-	{
-		$this->username = $a_username;
-	}
+    /**
+     * @param string $a_username
+     */
+    public function setUsername(string $a_username) : void
+    {
+        $this->username = $a_username;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getUsername() : string
-	{
-		return $this->username;
-	}
+    /**
+     * @return string
+     */
+    public function getUsername() : string
+    {
+        return $this->username;
+    }
 
-	/**
-	 * @param string $a_password
-	 */
-	public function setPassword(string $a_password)
-	{
-		$this->password = $a_password;
-	}
+    /**
+     * @param string $a_password
+     */
+    public function setPassword(string $a_password) : void
+    {
+        $this->password = $a_password;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getPassword() : string
-	{
-		return $this->password;
-	}
+    /**
+     * @return string
+     */
+    public function getPassword() : string
+    {
+        return $this->password;
+    }
 
-	/**
-	 * @param string $a_domain
-	 */
-	public function setDomain(string $a_domain)
-	{
-		$this->domain = $a_domain;
-	}
+    /**
+     * @param string $a_domain
+     */
+    public function setDomain(string $a_domain) : void
+    {
+        $this->domain = $a_domain;
+    }
 
-	/**
-	 * return string
-	 */
-	public function getDomain()
-	{
-		return $this->domain;
-	}
+    /**
+     * @return string
+     */
+    public function getDomain() : string
+    {
+        return $this->domain;
+    }
 
-	/**
-	 * @param int $id
-	 */
-	public function setBaseFolderId($id)
-	{
-		$this->base_folder_id = $id;
-	}
+    /**
+     * @param int $id
+     */
+    public function setBaseFolderId(int $id) : void
+    {
+        $this->base_folder_id = $id;
+    }
 
-	/**
-	 * @return int
-	 */
-	public function getBaseFolderId()
-	{
-		return $this->base_folder_id;
-	}
+    /**
+     * @return int
+     */
+    public function getBaseFolderId() : int
+    {
+        return $this->base_folder_id;
+    }
 
     /**
      * @return int
@@ -319,53 +318,51 @@ class ilOpenTextSettings
 
 
 
-	/**
-	 * save settings
-	 */
-	public function save()
-	{
-		$this->getStorage()->set('active', (int) $this->isActive());
-		$this->getStorage()->set('level', (int) $this->getLogLevel());
-		$this->getStorage()->set('file', (string) $this->getLogFile());
-		$this->getStorage()->set('uri',$this->getUri());
-		$this->getStorage()->set('username', $this->getUsername());
-		$this->getStorage()->set('password', $this->getPassword());
-		$this->getStorage()->set('domain', $this->getDomain());
-		$this->getStorage()->set('base_folder_id', $this->getBaseFolderId());
-		$this->getStorage()->set('document', $this->getDocumentId());
-		$this->getStorage()->set('document_manager', $this->getDocumentManagerId());
-		$this->getStorage()->set('document_owner', $this->getDocumentOwnerId());
-		$this->getStorage()->set('document_info', $this->getDocumentInfoId());
-		$this->getStorage()->set('document_info_id', $this->getDocumentInfoIdId());
-	}
+    /**
+     * save settings
+     */
+    public function save()
+    {
+        $this->getStorage()->set('active', (int) $this->isActive());
+        $this->getStorage()->set('level', (int) $this->getLogLevel());
+        $this->getStorage()->set('file', (string) $this->getLogFile());
+        $this->getStorage()->set('uri', $this->getUri());
+        $this->getStorage()->set('username', $this->getUsername());
+        $this->getStorage()->set('password', $this->getPassword());
+        $this->getStorage()->set('domain', $this->getDomain());
+        $this->getStorage()->set('base_folder_id', $this->getBaseFolderId());
+        $this->getStorage()->set('document', $this->getDocumentId());
+        $this->getStorage()->set('document_manager', $this->getDocumentManagerId());
+        $this->getStorage()->set('document_owner', $this->getDocumentOwnerId());
+        $this->getStorage()->set('document_info', $this->getDocumentInfoId());
+        $this->getStorage()->set('document_info_id', $this->getDocumentInfoIdId());
+    }
 
-	/**
-	 * @return \ilSetting
-	 */
-	protected function getStorage() : \ilSetting
-	{
-		return $this->storage;
-	}
+    /**
+     * @return \ilSetting
+     */
+    protected function getStorage() : \ilSetting
+    {
+        return $this->storage;
+    }
 
-	/**
-	 * Load settings from db
-	 */
-	protected function loadFromDb()
-	{
-		$this->setActive((bool) $this->getStorage()->get('active'));
-		$this->setLogLevel((int) $this->getStorage()->get('level', $this->getLogLevel()));
-		$this->setLogFile((string) $this->getStorage()->get('file', $this->getLogFile()));
-		$this->setUri((string) $this->getStorage()->get('uri'));
-		$this->setUsername((string) $this->getStorage()->get('username'));
-		$this->setPassword((string) $this->getStorage()->get('password'));
-		$this->setDomain((string) $this->getStorage()->get('domain'));
-		$this->setBaseFolderId((string) $this->getStorage()->get('base_folder_id'));
-		$this->setDocumentId((int) $this->getStorage()->get('document'));
-		$this->setDocumentManagerId((int) $this->getStorage()->get('document_manager'));
-		$this->setDocumentOwnerId((int) $this->getStorage()->get('document_owner'));
-		$this->setDocumentInfoId((int) $this->getStorage()->get('document_info'));
-		$this->setDocumentInfoIdId((int) $this->getStorage()->get('document_info_id'));
-	}
-
-
+    /**
+     * Load settings from db
+     */
+    protected function loadFromDb()
+    {
+        $this->setActive((bool) $this->getStorage()->get('active'));
+        $this->setLogLevel((int) $this->getStorage()->get('level', $this->getLogLevel()));
+        $this->setLogFile((string) $this->getStorage()->get('file', $this->getLogFile()));
+        $this->setUri((string) $this->getStorage()->get('uri'));
+        $this->setUsername((string) $this->getStorage()->get('username'));
+        $this->setPassword((string) $this->getStorage()->get('password'));
+        $this->setDomain((string) $this->getStorage()->get('domain'));
+        $this->setBaseFolderId((int) $this->getStorage()->get('base_folder_id'));
+        $this->setDocumentId((int) $this->getStorage()->get('document'));
+        $this->setDocumentManagerId((int) $this->getStorage()->get('document_manager'));
+        $this->setDocumentOwnerId((int) $this->getStorage()->get('document_owner'));
+        $this->setDocumentInfoId((int) $this->getStorage()->get('document_info'));
+        $this->setDocumentInfoIdId((int) $this->getStorage()->get('document_info_id'));
+    }
 }

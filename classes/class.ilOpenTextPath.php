@@ -31,6 +31,9 @@ class ilOpenTextPath
      */
     private $otxt_id = 0;
 
+    /**
+     * @var null|ilDBInterface
+     */
     private $db = null;
 
     /**
@@ -57,7 +60,7 @@ class ilOpenTextPath
     public function save() : bool
     {
         $query = 'INSERT INTO ' . self::TABLE_NAME . ' (path, otxt_id) ' .
-            'VALUES ( '.
+            'VALUES ( ' .
             $this->db->quote($this->path, \ilDBConstants::T_TEXT) . ', ' .
             $this->db->quote($this->otxt_id, \ilDBConstants::T_INTEGER) . ' ' .
             ')';
@@ -78,9 +81,8 @@ class ilOpenTextPath
     /**
      * @return int
      */
-    public function getOpentTextId() : int
+    public function getOpenTextId() : int
     {
         return $this->otxt_id;
     }
-
 }

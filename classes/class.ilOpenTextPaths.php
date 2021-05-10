@@ -22,6 +22,9 @@ class ilOpenTextPaths
      */
     private $paths = [];
 
+    /**
+     * @var null|ilDBInterface
+     */
     private $db = null;
 
     /**
@@ -38,9 +41,9 @@ class ilOpenTextPaths
     /**
      * @return \ilOpenTextPaths
      */
-    public static function getInstance()
+    public static function getInstance() : ilOpenTextPaths
     {
-        if(!self::$instance instanceof \ilOpenTextPaths) {
+        if (!self::$instance instanceof \ilOpenTextPaths) {
             self::$instance = new self();
         }
         return self::$instance;
@@ -52,11 +55,11 @@ class ilOpenTextPaths
      * @param string $a_path
      * @return int|null
      */
-    public function lookupOpentTextId(string $a_path)
+    public function lookupOpenTextId(string $a_path) : ?int
     {
         foreach ($this->paths as $path) {
-            if($path->getPath() == $a_path) {
-                return $path->getOpentTextId();
+            if ($path->getPath() == $a_path) {
+                return $path->getOpenTextId();
             }
         }
     }
@@ -64,13 +67,12 @@ class ilOpenTextPaths
     /**
      * @param ilOpenTextPath $path
      */
-    public function addPath(\ilOpenTextPath $path) {
-
-        if(!$path->isStored()) {
+    public function addPath(\ilOpenTextPath $path)
+    {
+        if (!$path->isStored()) {
             $path->save();
         }
         $this->paths[] = $path;
-
     }
 
     /**
@@ -81,7 +83,6 @@ class ilOpenTextPaths
         $query = 'SELECT * from ' . \ilOpenTextPath::TABLE_NAME;
         $res = $this->db->query($query);
         while ($row = $res->fetchRow(\ilDBConstants::FETCHMODE_OBJECT)) {
-
             $this->paths[] = new \ilOpenTextPath($row->path, $row->otxt_id);
         }
     }

@@ -19,123 +19,120 @@ use GuzzleHttp\Client;
  */
 class ilOpenTextConnector
 {
-	const OTXT_DOCUMENT_TYPE = 144;
-	const OTXT_FOLDER_TYPE = 0;
-	const OTXT_EXTERNAL_SOURCE_TYPE = 'file_system';
-	const OTXT_EXTERNAL_USER_LOGIN_TYPE = 'generic_userid';
+    const OTXT_DOCUMENT_TYPE = 144;
+    const OTXT_FOLDER_TYPE = 0;
+    const OTXT_EXTERNAL_SOURCE_TYPE = 'file_system';
+    const OTXT_EXTERNAL_USER_LOGIN_TYPE = 'generic_userid';
     const OTXT_EXTERNAL_USER_LDAP_TYPE = 'ldap_name';
 
-	/**
-	 * @var null
-	 */
-	private static $instance = null;
-
-	/**
-	 * @var \ilLogger
-	 */
-	private $logger = null;
-
-	/**
-	 * @var \ilOpenTextSettings|null
-	 */
-	private $settings = null;
-
-	/**
-	 * @var bool
-	 */
-	private $initialized = false;
-
-	/**
-	 * @var DefaultApi|null
-	 */
-	private $api = null;
-
-	/**
-	 * ilOpenTextConnector constructor.
-	 */
-	private function __construct()
-	{
-		global $DIC;
-
-		$this->logger = $DIC->logger()->otxt();
-		$this->settings = ilOpenTextSettings::getInstance();
-	}
-
-	/**
-	 * @return \ilOpenTextConnector|null
-	 */
-	public static function getInstance()
-	{
-		if(!self::$instance instanceof \ilOpenTextConnector) {
-			self::$instance  = new self();
-		}
-		return self::$instance;
-	}
-
-	/**
-	 * Ping service
-	 * @throws \ilOpenTextConnectionException
-	 */
-	public function ping()
-	{
-		$this->prepareApiCall();
-	}
-
-
-	/**
-	 * @param $node_id
-	 * @return \Swagger\Client\Model\V2ResponseElement
-	 * @throws \ilOpenTextConnectionException
-	 */
-	public function getNode($node_id)
-	{
-		$this->prepareApiCall();
-
-		try {
-			$res = $this->api->getNode($node_id);
-			return $res;
-		}
-		catch(Exception $e) {
-			$this->logger->error('Api get node failed with message: ' . $e->getMessage());
-			$this->logger->error($e->getResponseHeaders());
-			throw new \ilOpenTextConnectionException($e->getMessage());
-		}
-	}
-
-	/**
-	 * @param int $node_id
-	 * @return \Swagger\Client\Model\VersionsInfo
-	 * @throws \ilOpenTextConnectionException
-	 */
-	public function getVersions($node_id)
-	{
-		$this->prepareApiCall();
-
-		try {
-			$res = $this->api->getVersions($node_id);
-			return $res;
-		}
-		catch(Exception $e) {
-			$this->logger->error('Api get versions failed with message: ' . $e->getMessage());
-			$this->logger->error($e->getResponseHeaders());
-			throw new \ilOpenTextConnectionException($e->getMessage());
-		}
-	}
+    /**
+     * @var null
+     */
+    private static $instance = null;
 
     /**
-     * @param $node_id
+     * @var \ilLogger
+     */
+    private $logger = null;
+
+    /**
+     * @var \ilOpenTextSettings|null
+     */
+    private $settings = null;
+
+    /**
+     * @var bool
+     */
+    private $initialized = false;
+
+    /**
+     * @var DefaultApi|null
+     */
+    private $api = null;
+
+    /**
+     * ilOpenTextConnector constructor.
+     */
+    private function __construct()
+    {
+        global $DIC;
+
+        $this->logger = $DIC->logger()->otxt();
+        $this->settings = ilOpenTextSettings::getInstance();
+    }
+
+    /**
+     * @return \ilOpenTextConnector|null
+     */
+    public static function getInstance()
+    {
+        if (!self::$instance instanceof \ilOpenTextConnector) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * Ping service
+     * @throws \ilOpenTextConnectionException
+     */
+    public function ping()
+    {
+        $this->prepareApiCall();
+    }
+
+
+    /**
+     * @param string $node_id
+     * @return \Swagger\Client\Model\V2ResponseElement
+     * @throws \ilOpenTextConnectionException
+     */
+    public function getNode(string $node_id) : V2ResponseElement
+    {
+        $this->prepareApiCall();
+
+        try {
+            $res = $this->api->getNode($node_id);
+            return $res;
+        } catch (Exception $e) {
+            $this->logger->error('Api get node failed with message: ' . $e->getMessage());
+            $this->logger->error($e->getResponseHeaders());
+            throw new \ilOpenTextConnectionException($e->getMessage());
+        }
+    }
+
+    /**
+     * @param string $node_id
+     * @return \Swagger\Client\Model\VersionsInfo
+     * @throws \ilOpenTextConnectionException
+     */
+    public function getVersions(string $node_id) : VersionsInfo
+    {
+        $this->prepareApiCall();
+
+        try {
+            $res = $this->api->getVersions($node_id);
+            return $res;
+        } catch (Exception $e) {
+            $this->logger->error('Api get versions failed with message: ' . $e->getMessage());
+            $this->logger->error($e->getResponseHeaders());
+            throw new \ilOpenTextConnectionException($e->getMessage());
+        }
+    }
+
+    /**
+     * @param string $node_id
      * @return CategoriesInfo
      * @throws ilOpenTextConnectionException
      */
-	public function getCategories($node_id)
+    public function getCategories(string $node_id) : CategoriesInfo
     {
         $this->prepareApiCall();
 
         try {
             $res = $this->api->getCategory($node_id);
             return $res;
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Api get category failed with message: ' . $e->getMessage());
             $this->logger->error($e->getResponseHeaders());
             throw new \ilOpenTextConnectionException($e->getMessage());
@@ -145,29 +142,28 @@ class ilOpenTextConnector
     /**
      * @param string         $a_name
      * @param ilObjFile      $ilfile
-     * @param                $version
+     * @param array          $version
      * @param \SplFileObject $file
      * @return int id
-     * @throws ilOpenTextConnectionException
+     * @throws ilOpenTextConnectionException|ilOpenTextRuntimeException
      */
-	public function addDocument($a_name, \ilObjFile $ilfile, $version, \SplFileObject $file)
-	{
-		$this->prepareApiCall();
+    public function addDocument(string $a_name, \ilObjFile $ilfile, array $version, \SplFileObject $file) : int
+    {
+        $this->prepareApiCall();
 
-		$a_parent_id = $this->buildParentFolders($ilfile->getId());
+        $a_parent_id = $this->buildParentFolders($ilfile->getId());
 
-		$document_id  = 0;
-		try {
+        $document_id = 0;
+        try {
+            $create_date = new DateTime($version['date']);
 
-		    $create_date = new DateTime($version['date']);
+            list($user_type, $username) = $this->parseUserInfo((int) $version['user_id']);
 
-		    list($user_type, $username) = $this->parseUserInfo((int) $version['user_id']);
-
-			$res = $this->api->addDocument(
-				self::OTXT_DOCUMENT_TYPE,
-				$a_parent_id,
-				$a_name,
-				$file,
+            $res = $this->api->addDocument(
+                self::OTXT_DOCUMENT_TYPE,
+                $a_parent_id,
+                $a_name,
+                $file,
                 null,
                 null,
                 $create_date,
@@ -177,42 +173,39 @@ class ilOpenTextConnector
                 $user_type
             );
 
-			$this->logger->dump($res, \ilLogLevel::DEBUG);
+            $this->logger->dump($res, \ilLogLevel::DEBUG);
 
             $document_id = $res->getResults()->getData()->getProperties()->getId();
-		}
-		catch(Exception $e) {
-			$this->logger->error('Api add document failed with message: ' . $e->getMessage());
-			$this->logger->error($e->getResponseHeaders());
-			throw new \ilOpenTextConnectionException($e->getMessage());
-		}
+        } catch (Exception $e) {
+            $this->logger->error('Api add document failed with message: ' . $e->getMessage());
+            $this->logger->error($e->getResponseHeaders());
+            throw new \ilOpenTextConnectionException($e->getMessage());
+        }
 
-		try {
+        try {
             $this->updateDocumentCategories(
                 $document_id,
                 $ilfile->getId(),
                 $username
             );
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new \ilOpenTextRuntimeException($e->getMessage());
         }
-		return $document_id;
-	}
+        return $document_id;
+    }
 
     /**
      * @param int $user_id
      * @return string[]
      */
-	private function parseUserInfo(int $user_id = 0) : array
+    private function parseUserInfo(int $user_id = 0) : array
     {
-        if(\ilObjUser::_lookupExternalAccount($user_id)) {
+        if (\ilObjUser::_lookupExternalAccount($user_id)) {
             return [
                 self::OTXT_EXTERNAL_USER_LDAP_TYPE,
                 \ilObjUser::_lookupExternalAccount($user_id)
             ];
-        }
-        else {
+        } else {
             return [
                 self::OTXT_EXTERNAL_USER_LOGIN_TYPE,
                 \ilObjUser::_lookupLogin($user_id)
@@ -226,7 +219,7 @@ class ilOpenTextConnector
      * @return int
      * @throws ilOpenTextConnectionException
      */
-	public function addFolder(string $a_name, int $a_parent_id)
+    public function addFolder(string $a_name, int $a_parent_id) : int
     {
         $this->prepareApiCall();
 
@@ -239,20 +232,19 @@ class ilOpenTextConnector
             $this->logger->dump($res, \ilLogLevel::DEBUG);
             $this->logger->debug('Received new folder id: ' . $res->getId());
             return $res->getId();
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Api add folder failed with message: ' . $e->getMessage());
             $this->logger->error($e->getResponseHeaders());
             throw new \ilOpenTextConnectionException($e->getMessage());
-
         }
     }
 
     /**
-     * @param $a_obj_id
+     * @param int $a_obj_id
+     * @return int
      * @throws ilOpenTextConnectionException
      */
-	protected function buildParentFolders($a_obj_id)
+    protected function buildParentFolders(int $a_obj_id) : int
     {
         $utils = \ilOpenTextUtils::getInstance();
         $path = $utils->buildPathFromId($a_obj_id);
@@ -261,16 +253,14 @@ class ilOpenTextConnector
         $start_node = $this->settings->getBaseFolderId();
         $current_path = [];
         foreach (explode('/', $path) as $path_item) {
-
             $current_path[] = $path_item;
-            $opentext_id = $path_map->lookupOpentTextId(implode('/',$current_path));
+            $opentext_id = $path_map->lookupOpenTextId(implode('/', $current_path));
 
-            if(is_null($opentext_id)) {
+            if (is_null($opentext_id)) {
                 $this->logger->debug('Creating new path: ' . implode('/', $current_path));
                 $start_node = $this->addFolder($path_item, $start_node);
                 $path_map->addPath(new \ilOpenTextPath(implode('/', $current_path), $start_node));
-            }
-            else {
+            } else {
                 $start_node = $opentext_id;
                 $this->logger->debug('Using existing path ' . implode('/', $current_path) . ' with id: ' . $opentext_id);
             }
@@ -286,16 +276,14 @@ class ilOpenTextConnector
      * @throws ilOpenTextConnectionException
      * @throws ilOpenTextRuntimeException
      */
-	public function addVersion($a_document_id, \ilObjFile $ilfile, $version, \SplFileObject $file)
-	{
-		$this->prepareApiCall();
+    public function addVersion(int $a_document_id, \ilObjFile $ilfile, array $version, \SplFileObject $file)
+    {
+        $this->prepareApiCall();
 
-		$create_date = new DateTime($version['date']);
+        $create_date = new DateTime($version['date']);
         list($user_type, $user_name) = $this->parseUserInfo((int) $version['user_id']);
 
-		try {
-
-
+        try {
             $res = $this->api->addVersion(
                 $a_document_id,
                 $file,
@@ -308,41 +296,34 @@ class ilOpenTextConnector
                 $user_type
             );
             $this->logger->info($res);
-
-
-
+        } catch (ApiException $e) {
+            $this->logger->error('Api add version failed with message: ' . $e->getMessage());
+            $this->logger->error($e->getResponseHeaders());
+            throw new \ilOpenTextConnectionException($e->getMessage());
+        } catch (\RuntimeException | \LogicException $e) {
+            $this->logger->error('Api add version failed with message: ' . $e->getMessage());
+            $this->logger->error($e->getTraceAsString());
+            throw new \ilOpenTextRuntimeException($e->getMessage());
         }
-		catch(ApiException $e) {
-			$this->logger->error('Api add version failed with message: ' . $e->getMessage());
-			$this->logger->error($e->getResponseHeaders());
-			throw new \ilOpenTextConnectionException($e->getMessage());
-		}
-		catch(\RuntimeException | \LogicException $e) {
-			$this->logger->error('Api add version failed with message: ' . $e->getMessage());
-			$this->logger->error($e->getTraceAsString());
-			throw new \ilOpenTextRuntimeException($e->getMessage());
-		}
 
-		try {
+        try {
             $this->updateDocumentCategories(
                 $a_document_id,
                 $ilfile->getId(),
                 $user_name
             );
+        } catch (\Exception $e) {
+            throw new \ilOpenTextRuntimeException($e->getMessage());
         }
-        catch(\Exception $e) {
-		    throw new \ilOpenTextRuntimeException($e->getMessage());
-        }
-	}
+    }
 
     /**
-     * @param $document_id
-     * @param $ilias_file_id
-     * @param $username
-     * @throws ApiException
+     * @param int $document_id
+     * @param int $ilias_file_id
+     * @param string $username
      * @throws ilOpenTextConnectionException
      */
-	protected function updateDocumentCategories($document_id, $ilias_file_id, $username)
+    protected function updateDocumentCategories(int $document_id, int $ilias_file_id, string $username)
     {
         $this->prepareApiCall();
         try {
@@ -371,7 +352,7 @@ class ilOpenTextConnector
 
             // document info
             $body_obj = new stdClass();
-            $info_id_name = (string) $this->settings->getDocumentInfoId(). '_' . (string) $this->settings->getDocumentInfoIdId();
+            $info_id_name = (string) $this->settings->getDocumentInfoId() . '_' . (string) $this->settings->getDocumentInfoIdId();
             $body_obj->$info_id_name = $ilias_file_id;
             $body = json_encode($body_obj);
 
@@ -382,8 +363,7 @@ class ilOpenTextConnector
                 $this->settings->getDocumentInfoId(),
                 $body
             );
-        }
-        catch (ApiException $e) {
+        } catch (ApiException $e) {
             $this->logger->error('Api category update failed with message: ' . $e->getMessage());
             $this->logger->error($e->getResponseHeaders());
             throw new \ilOpenTextConnectionException($e->getMessage());
@@ -397,7 +377,7 @@ class ilOpenTextConnector
      * @return ResultsData[]
      * @throws ilOpenTextConnectionException
      */
-	public function search(string $query, int $slice, int $limit)
+    public function search(string $query, int $slice, int $limit) : array
     {
         $this->prepareApiCall();
 
@@ -405,34 +385,31 @@ class ilOpenTextConnector
             $res = $this->api->search($query, $slice, null, 1, $limit);
             $this->logger->dump($res);
             return $res->getResults();
-        }
-        catch (ApiException $e) {
+        } catch (ApiException $e) {
             $this->logger->error('Api search failed with message: ' . $e->getMessage());
             $this->logger->error($e->getResponseHeaders());
             throw new \ilOpenTextConnectionException($e->getMessage());
-
-        }
-        catch (\RuntimeException | \LogicException $e) {
+        } catch (\RuntimeException | \LogicException $e) {
             $this->logger->error('Api search failed with message: ' . $e->getMessage());
             $this->logger->error($e->getTraceAsString());
             throw new \ilOpenTextConnectionException($e->getMessage());
         }
     }
 
+    /**
+     * @throws ilOpenTextConnectionException
+     */
     public function lookupRegions()
     {
         $this->prepareApiCall();
         try {
             $res = $this->api->lookupRegions(true);
             $this->logger->dump($res);
-        }
-        catch (ApiException $e) {
+        } catch (ApiException $e) {
             $this->logger->error('Api lookupRegions failed with message: ' . $e->getMessage());
             $this->logger->error($e->getResponseHeaders());
             throw new \ilOpenTextConnectionException($e->getMessage());
-
-        }
-        catch (\RuntimeException | \LogicException $e) {
+        } catch (\RuntimeException | \LogicException $e) {
             $this->logger->error('Api lookupRegions failed with message: ' . $e->getMessage());
             $this->logger->error($e->getTraceAsString());
             throw new \ilOpenTextConnectionException($e->getMessage());
@@ -441,82 +418,81 @@ class ilOpenTextConnector
 
 
 
-	/**
-	 * Prepare api call
-	 * @throws \ilOpenTextConnectionException on connection failure
-	 */
-	private function prepareApiCall()
-	{
-		if(!$this->api instanceof DefaultApi) {
-			$this->initialize();
-		}
-		if(!$this->api->getConfig()->getApiKey(ilOpenTextSettings::OCTS_HEADER_TICKET_NAME)) {
-			$this->logger->debug('No api key avalailable: trying to login.');
-			$this->login();
-		}
-	}
+    /**
+     * Prepare api call
+     * @throws \ilOpenTextConnectionException on connection failure
+     */
+    private function prepareApiCall()
+    {
+        if (!$this->api instanceof DefaultApi) {
+            $this->initialize();
+        }
+        if (!$this->api->getConfig()->getApiKey(ilOpenTextSettings::OCTS_HEADER_TICKET_NAME)) {
+            $this->logger->debug('No api key avalailable: trying to login.');
+            $this->login();
+        }
+    }
 
-	/**
-	 * Login and receive api key.
-	 * @throws \ilOpenTextConnectionException
-	 */
-	private function login()
-	{
-		try {
-			$res = $this->api->apiV1AuthPost(
-				$this->settings->getUsername(),
-				$this->settings->getPassword(),
-				$this->settings->getDomain()
-			);
+    /**
+     * Login and receive api key.
+     * @throws \ilOpenTextConnectionException
+     */
+    private function login()
+    {
+        try {
+            $res = $this->api->apiV1AuthPost(
+                $this->settings->getUsername(),
+                $this->settings->getPassword(),
+                $this->settings->getDomain()
+            );
 
-			$this->logger->info('received api ticket: ' . $res->getTicket());
+            $this->logger->info('received api ticket: ' . $res->getTicket());
 
-			$this->api->getConfig()->setApiKey(
-				ilOpenTextSettings::OCTS_HEADER_TICKET_NAME,
-				$res->getTicket()
-			);
-		}
-		catch(ApiException $e) {
-			$this->logger->warning('Api login failed with message: ' . $e->getMessage());
-			$this->logger->warning($e->getResponseHeaders());
-			$this->logger->warning($e->getResponseBody());
-			throw new \ilOpenTextConnectionException($e->getMessage(), ilOpenTextConnectionException::ERR_LOGIN_FAILED);
-		}
-	}
+            $this->api->getConfig()->setApiKey(
+                ilOpenTextSettings::OCTS_HEADER_TICKET_NAME,
+                $res->getTicket()
+            );
+        } catch (ApiException $e) {
+            $this->logger->warning('Api login failed with message: ' . $e->getMessage());
+            $this->logger->warning($e->getResponseHeaders());
+            $this->logger->warning($e->getResponseBody());
+            throw new \ilOpenTextConnectionException($e->getMessage(), ilOpenTextConnectionException::ERR_LOGIN_FAILED);
+        }
+    }
 
 
-	/**
-	 * Initialize rest api
-	 */
-	private function initialize()
-	{
-		$this->logger->debug('Initializing rest api.');
+    /**
+     * Initialize rest api
+     */
+    private function initialize()
+    {
+        $this->logger->debug('Initializing rest api.');
 
-		// init header selector
-		$selector = new \ilOpenTextAuthHeaderSelector();
-		$config = new Configuration();
+        // init header selector
+        $selector = new \ilOpenTextAuthHeaderSelector();
+        $config = new Configuration();
 
-		if(
-			$this->settings->getLogLevel() == \ilLogLevel::DEBUG &&
-			$this->settings->getLogFile() != ''
-		)
-		{
-			$config->setDebug(false);
-			$config->setDebugFile($this->settings->getLogFile());
-		}
+        if (
+            $this->settings->getLogLevel() == \ilLogLevel::DEBUG &&
+            $this->settings->getLogFile() != ''
+        ) {
+            $config->setDebug(false);
+            $config->setDebugFile($this->settings->getLogFile());
+        }
 
-		$client = new Client(
-			[
-				'verify' => false,
-				'allow_redirects' => true
-		]);
+        $client = new Client(
+            [
+                'verify' => false,
+                'allow_redirects' => true
+        ]
+        );
 
-		$config->setHost($this->settings->getUri());
+        $config->setHost($this->settings->getUri());
 
-		$this->api = new DefaultApi(
-			$client,
-			$config,
-			$selector
-		);
-	}
+        $this->api = new DefaultApi(
+            $client,
+            $config,
+            $selector
+        );
+    }
 }

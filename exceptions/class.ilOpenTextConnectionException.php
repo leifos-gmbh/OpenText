@@ -11,44 +11,42 @@
  */
 class ilOpenTextConnectionException extends ilException
 {
-	const ERR_LOGIN_FAILED = 1;
+    const ERR_LOGIN_FAILED = 1;
 
-	private static $code_messages = [
-		self::ERR_LOGIN_FAILED => 'exception_login_failed'
-	];
-
-
-	/**
-	 * @return string
-	 */
-	public function exceptionCodeToString()
-	{
-		switch($this->getCode()) {
-
-			case self::ERR_LOGIN_FAILED:
-				return 'exc_login_failed';
-		}
-
-	}
-
-	/**
-	 * @param int $code
-	 * @return string
-	 */
-	public static function getMessageForCode(int $code)
-	{
-		return self::$code_messages[$code];
-	}
+    private static $code_messages = [
+        self::ERR_LOGIN_FAILED => 'exception_login_failed'
+    ];
 
 
-	/**
-	 * @param int $code
-	 * @return string
-	 */
-	public static function translateExceptionCode(int $code) : string
-	{
-		$plugin = \ilOpenTextPlugin::getInstance();
-		return $plugin->txt(self::exceptionCodeToString($code));
-	}
+    /**
+     * @return string
+     */
+    public function exceptionCodeToString() : string
+    {
+        switch ($this->getCode()) {
 
+            case self::ERR_LOGIN_FAILED:
+                return 'exc_login_failed';
+        }
+    }
+
+    /**
+     * @param int $code
+     * @return string
+     */
+    public static function getMessageForCode(int $code) : string
+    {
+        return self::$code_messages[$code];
+    }
+
+
+    /**
+     * @param int $code
+     * @return string
+     */
+    public static function translateExceptionCode(int $code) : string
+    {
+        $plugin = \ilOpenTextPlugin::getInstance();
+        return $plugin->txt(self::exceptionCodeToString($code));
+    }
 }

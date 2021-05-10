@@ -7,155 +7,160 @@
  */
 class ilOpenTextSynchronisationInfo
 {
-	const TABLE_ITEMS = 'evnt_evhk_otxt_items';
+    const TABLE_ITEMS = 'evnt_evhk_otxt_items';
 
     /**
      * @var int
      */
-	const SYNC_LIMIT = 300;
+    const SYNC_LIMIT = 300;
 
-	private static $instance = null;
+    private static $instance = null;
 
-	/**
-	 * @var \ilDBInterface|null
-	 */
-	protected $db = null;
+    /**
+     * @var \ilDBInterface|null
+     */
+    protected $db = null;
 
-	private $logger = null;
-
-
-	/**
-	 * @var \ilOpenTextSynchronisationInfoItem[]
-	 */
-	private $info_items = [];
-
-	private $info_items_initialized = false;
+    /**
+     * @var null|ilLogger
+     */
+    private $logger = null;
 
 
-	/**
-	 * ilOpenTextSynchronisationInfo constructor.
-	 */
-	private function __construct()
-	{
-		global $DIC;
+    /**
+     * @var \ilOpenTextSynchronisationInfoItem[]
+     */
+    private $info_items = [];
 
-		$this->db = $DIC->database();
-		$this->logger = $DIC->logger()->otxt();
-	}
-
-	/**
-	 * @return \ilOpenTextSynchronisationInfo
-	 */
-	public static function getInstance()
-	{
-		if(!self::$instance instanceof \ilOpenTextSynchronisationInfo) {
-			self::$instance = new self();
-		}
-		return self::$instance;
-	}
+    /**
+     * @var bool
+     */
+    private $info_items_initialized = false;
 
 
-	/**
-	 * @param int $a_obj_id
-	 * @return \ilOpenTextSynchronisationInfoItem|null
-	 * @throws \ilDatabaseException
-	 */
-	public function getItemForObjId($a_obj_id)
-	{
-		$query = 'select * from ' . self::TABLE_ITEMS . ' '.
-			'where obj_id = ' . $this->db->quote($a_obj_id, 'integer');
-		$res = $this->db->query($query);
+    /**
+     * ilOpenTextSynchronisationInfo constructor.
+     */
+    private function __construct()
+    {
+        global $DIC;
+
+        $this->db = $DIC->database();
+        $this->logger = $DIC->logger()->otxt();
+    }
+
+    /**
+     * @return \ilOpenTextSynchronisationInfo
+     */
+    public static function getInstance() : ilOpenTextSynchronisationInfo
+    {
+        if (!self::$instance instanceof \ilOpenTextSynchronisationInfo) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
 
-		$item = null;
-		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
-
-			$item = new ilOpenTextSynchronisationInfoItem(
-				$a_obj_id,
-				$row->otxt_id,
-				$row->status
-			);
-		}
-
-		if(!$item instanceof \ilOpenTextSynchronisationInfoItem) {
-			$item = new \ilOpenTextSynchronisationInfoItem(
-				$a_obj_id
-			);
-		}
-		return $item;
-	}
-
-	/**
-	 * Get items for synchronization
-	 * @return \ilOpenTextSynchronisationInfoItem[]
-	 */
-	public function getItemsForSynchronization()
-	{
-		if($this->info_items_initialized) {
-			return $this->info_items;
-		}
-
-		$query = 'select obj_id, otxt_id, status from ' . \ilOpenTextSynchronisationInfo::TABLE_ITEMS. ' '.
-			'where status = ' . $this->db->quote(\ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED, 'integer');
-
-		$this->db->setLimit(self::SYNC_LIMIT);
-		$res = $this->db->query($query);
-
-		$this->info_items = [];
-		$this->info_items_initialized = true;
-		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
-
-			$this->info_items[] = new \ilOpenTextSynchronisationInfoItem(
-				$row->obj_id,
-				$row->otxt_id,
-				$row->status
-			);
-		}
-		return $this->info_items;
-	}
+    /**
+     * @param int $a_obj_id
+     * @return \ilOpenTextSynchronisationInfoItem|null
+     * @throws \ilDatabaseException
+     */
+    public function getItemForObjId(int $a_obj_id) : ?ilOpenTextSynchronisationInfoItem
+    {
+        $query = 'select * from ' . self::TABLE_ITEMS . ' ' .
+            'where obj_id = ' . $this->db->quote($a_obj_id, 'integer');
+        $res = $this->db->query($query);
 
 
-	/**
-	 * @throws \ilDatabaseException
-	 */
-	public function createMissingItems()
-	{
-	    $synchronisable_refs = \ilOpenTextUtils::getInstance()->readSynchronisableCategories();
-	    $disabled_refs = \ilOpenTextUtils::getInstance()->readDisabledCategories();
+        $item = null;
+        while ($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
+            $item = new ilOpenTextSynchronisationInfoItem(
+                $a_obj_id,
+                $row->otxt_id,
+                $row->status
+            );
+        }
 
-		$query = 'select distinct(obd.obj_id) from object_data obd '.
-			'join object_reference obr on obd.obj_id = obr.obj_id '.
-			'left join ' . self::TABLE_ITEMS . ' otxt on obd.obj_id = otxt.obj_id '.
-			'where obd.type = ' . $this->db->quote('file', 'text'). ' '.
-			'and otxt.obj_id is null '.
-			'group by obd.obj_id ';
-		$res = $this->db->query($query);
-		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
+        if (!$item instanceof \ilOpenTextSynchronisationInfoItem) {
+            $item = new \ilOpenTextSynchronisationInfoItem(
+                $a_obj_id
+            );
+        }
+        return $item;
+    }
 
+    /**
+     * Get items for synchronization
+     * @return \ilOpenTextSynchronisationInfoItem[]
+     */
+    public function getItemsForSynchronization() : array
+    {
+        if ($this->info_items_initialized) {
+            return $this->info_items;
+        }
+
+        $query = 'select obj_id, otxt_id, status from ' . \ilOpenTextSynchronisationInfo::TABLE_ITEMS . ' ' .
+            'where status = ' . $this->db->quote(\ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED, 'integer');
+
+        $this->db->setLimit(self::SYNC_LIMIT);
+        $res = $this->db->query($query);
+
+        $this->info_items = [];
+        $this->info_items_initialized = true;
+        while ($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
+            $this->info_items[] = new \ilOpenTextSynchronisationInfoItem(
+                $row->obj_id,
+                $row->otxt_id,
+                $row->status
+            );
+        }
+        return $this->info_items;
+    }
+
+
+    /**
+     * @throws \ilDatabaseException
+     */
+    public function createMissingItems()
+    {
+        $synchronisable_refs = \ilOpenTextUtils::getInstance()->readSynchronisableCategories();
+        $disabled_refs = \ilOpenTextUtils::getInstance()->readDisabledCategories();
+
+        $query = 'select distinct(obd.obj_id) from object_data obd ' .
+            'join object_reference obr on obd.obj_id = obr.obj_id ' .
+            'left join ' . self::TABLE_ITEMS . ' otxt on obd.obj_id = otxt.obj_id ' .
+            'where obd.type = ' . $this->db->quote('file', 'text') . ' ' .
+            'and otxt.obj_id is null ' .
+            'group by obd.obj_id ';
+        $res = $this->db->query($query);
+        while ($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
             $status = $this->isSynchronisationRequired(
                 $synchronisable_refs,
                 $disabled_refs,
-                $row->obj_id) ?
+                $row->obj_id
+            ) ?
                 \ilOpenTextSynchronisationInfoItem::STATUS_SCHEDULED :
                 \ilOpenTextSynchronisationInfoItem::STATUS_SYNC_DISABLED;
 
-			$new_entry = new \ilOpenTextSynchronisationInfoItem(
-				$row->obj_id,
-				0,
+            $new_entry = new \ilOpenTextSynchronisationInfoItem(
+                $row->obj_id,
+                0,
                 $status
-			);
-			$new_entry->save();
-			$this->logger->debug('Added new opentxt item for obj_id : ' . $row->obj_id . ' with status: ' . $status);
-		}
-		$this->info_items_initialized = false;
-	}
+            );
+            $new_entry->save();
+            $this->logger->debug('Added new opentxt item for obj_id : ' . $row->obj_id . ' with status: ' . $status);
+        }
+        $this->info_items_initialized = false;
+    }
 
     /**
      * @param int[] $synchronisable_items
-     * @param int $file_obj_id
+     * @param array $disabled_categories
+     * @param int   $file_obj_id
      * @return bool
      */
-	public function isSynchronisationRequired(array $synchronisable_items, array $disabled_categories, $file_obj_id)  : bool
+    public function isSynchronisationRequired(array $synchronisable_items, array $disabled_categories, $file_obj_id) : bool
     {
         global $DIC;
 
@@ -177,7 +182,7 @@ class ilOpenTextSynchronisationInfo
                 $relation = $tree->getRelation($synchronisable_item, $ref_id);
                 switch ($relation) {
                     case \ilTree::RELATION_PARENT:
-                        $this->logger->info('Relation is parent =>  category sync is enabled for ref_id:' . $ref_id );
+                        $this->logger->info('Relation is parent =>  category sync is enabled for ref_id:' . $ref_id);
                         return true;
 
                     default:
