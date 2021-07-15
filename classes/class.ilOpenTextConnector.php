@@ -344,7 +344,7 @@ class ilOpenTextConnector
 
             $this->logger->dump($body);
 
-            $null = $this->api->updateCategory(
+            $this->api->updateCategory(
                 $document_id,
                 $this->settings->getDocumentId(),
                 $body
@@ -358,7 +358,7 @@ class ilOpenTextConnector
 
             $this->logger->dump($body);
 
-            $null = $this->api->updateCategory(
+            $this->api->updateCategory(
                 $document_id,
                 $this->settings->getDocumentInfoId(),
                 $body

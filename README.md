@@ -1,10 +1,10 @@
 # OpenText
 
 **Minimum ILIAS Version:**
-6.0
+7.0
 
 **Maximum ILIAS Version:**
-6.99
+7.99
 
 **Responsible Developer:**
 Stefan Meyer - meyer AT leifos.com

@@ -94,7 +94,7 @@ class ilOpenTextCronJobHandler
             $this->logger->notice('Cannot create file instance for obj_id: ' . $item->getObjId());
             $item->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_FAILURE);
             $item->save();
-            return;
+            return false;
         }
 
         $versions = $file->getVersions();
@@ -104,7 +104,7 @@ class ilOpenTextCronJobHandler
         if (!count($versions)) {
             $item->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_SYNCHRONISED);
             $item->save();
-            return;
+            return true;
         }
         // if no otxt_id is available => create document node
 

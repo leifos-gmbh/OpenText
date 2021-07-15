@@ -99,9 +99,9 @@ class ilOpenTextConfigGUI extends ilPluginConfigGUI
     protected function handleTabs(string $active_tab)
     {
         if ($this->is_plugin_context) {
-            return $this->handlePluginTabs($active_tab);
+            $this->handlePluginTabs($active_tab);
         } else {
-            return $this->handleFileAdministrationTabs($active_tab);
+            $this->handleFileAdministrationTabs($active_tab);
         }
     }
 
