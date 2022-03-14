@@ -77,14 +77,12 @@ class ilOpenTextCronJobHandler
     }
 
     /**
-     * @param ilOpenTextSynchronisationInfoItem $item
-     * @return false|void
      * @throws ilDatabaseException
      * @throws ilObjectNotFoundException
      * @throws ilOpenTextConnectionException
      * @throws ilOpenTextRuntimeException
      */
-    protected function synchronizeItem(\ilOpenTextSynchronisationInfoItem $item) : ?bool
+    protected function synchronizeItem(\ilOpenTextSynchronisationInfoItem $item) : bool
     {
         $item->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_IN_PROGRESS);
         $item->save();
@@ -145,6 +143,7 @@ class ilOpenTextCronJobHandler
             $item->setStatus(\ilOpenTextSynchronisationInfoItem::STATUS_FAILURE);
             $item->save();
         }
+        return true;
     }
 
 
@@ -178,25 +177,39 @@ class ilOpenTextCronJobHandler
 
     /**
      * @param ilObjFile    $file
-     * @param array        $file_version
+     * @param ilObjFileVersion $file_version
      * @param VersionsInfo $versions
      * @throws RuntimeException
      * @throws LogicException
      * @return bool
+     * @todo send external create date and compare
      */
-    protected function isFileVersionSynchronized(\ilObjFile $file, array $file_version, VersionsInfo $versions) : bool
+    protected function isFileVersionSynchronized(\ilObjFile $file, ilObjFileVersion $file_version, VersionsInfo $versions) : bool
     {
         foreach ($versions->getData() as $idx => $version) {
-            $compare = $version->getFileName() . '_' . $version->getFileSize();
+            // default compare external create date
+            $this->logger->debug('Comparing ' . $version->getExternalCreateDate()->format(DateTimeInterface::ATOM) . ' with ' . $file_version->getDate());
+            $this->logger->debug('Comparing ' . $version->getFileSize() . ' with ' . $file_version->getSize());
+            $this->logger->dump($version->getExternalCreateDate()->format(DateTimeInterface::ATOM) == $file_version->getDate());
+            if (
+                $version->getExternalCreateDate()->format(DateTimeInterface::ATOM) == $file_version->getDate() &&
+                $version->getFileSize() == $file_version->getSize()
+            ) {
+                $this->logger->debug('..... matches');
+                return true;
+            }
+
+            /**
+            $compare = $idx . '_' . $version->getFileSize();
             $version_compare = '';
 
             try {
                 $spl_file = new \SplFileObject(
-                    $file->getDirectory($file_version['version']) . '/' . $file_version['filename']
+                    $file->getDirectory($file_version->getVersion()) . '/data'
                 );
-                $version_compare = $file_version['filename'] . '_' . $spl_file->getSize();
+                $version_compare = $file_version->getVersion() . '_' . $file_version->getSize();
             } catch (RuntimeException | LogicException $e) {
-                $this->logger->notice('Cannot open file: ' . $file->getDirectory($file_version['version'] . '/' . $file_version['filename']));
+                $this->logger->notice('Cannot open file: ' . $file->getDirectory($file_version->getVersion() . '/data'));
                 $this->logger->warning($e->getMessage());
                 return false;
             }
@@ -204,6 +217,7 @@ class ilOpenTextCronJobHandler
             if (strcmp($compare, $version_compare) === 0) {
                 return true;
             }
+             **/
         }
         return false;
     }
@@ -217,14 +231,14 @@ class ilOpenTextCronJobHandler
      * @throws ilOpenTextConnectionException
      * @throws ilOpenTextRuntimeException
      */
-    protected function createVersion(\ilOpenTextSynchronisationInfoItem $item, \ilObjFile $file, array $file_version) : bool
+    protected function createVersion(\ilOpenTextSynchronisationInfoItem $item, \ilObjFile $file, ilObjFileVersion $file_version) : bool
     {
-        $name = $file_version['filename'];
+        $name = $file_version->getFilename();
 
         $spl_file = null;
         try {
-            $this->logger->info('File path is: ' . $file->getDirectory($file_version['version']) . '/' . $name);
-            $spl_file = new \SplFileObject($file->getDirectory($file_version['version']) . '/' . $name);
+            $this->logger->info('File path is: ' . $file->getDirectory($file_version->getVersion()) . '/data' );
+            $spl_file = new \SplFileObject($file->getDirectory($file_version->getVersion()) . '/data');
 
             if ($spl_file->isReadable()) {
                 $this->logger->debug('File is readable');
@@ -234,11 +248,11 @@ class ilOpenTextCronJobHandler
             }
         } catch (\RuntimeException $e) {
             // do not throw, since this would block the sync of other planned items
-            $this->logger->warning('Cannot open file: ' . $file->getDirectory($file_version['version']) . '/' . $name);
+            $this->logger->warning('Cannot open file: ' . $file->getDirectory($file_version->getVersion()) . '/data');
             throw $e;
         } catch (\LogicException $e) {
             // do not throw, since this would block the sync of other planned items
-            $this->logger->warning('Cannot open file: ' . $file->getDirectory($file_version['version']) . '/' . $name);
+            $this->logger->warning('Cannot open file: ' . $file->getDirectory($file_version->getVersion()) . '/data');
             throw new \RuntimeException($e->getMessage());
         }
 
@@ -262,15 +276,15 @@ class ilOpenTextCronJobHandler
     protected function createFirstVersion(\ilOpenTextSynchronisationInfoItem $item, \ilObjFile $file) : bool
     {
         $versions = array_reverse($file->getVersions());
+        $this->logger->dump($versions, ilLogLevel::NOTICE);
         foreach ($versions as $version) {
             $name = $file->getId() . '_' . $version['filename'];
-            $version_id = $version['version'];
-
+            $version_id = $version->getVersion();
             $directory = $file->getDirectory($version_id);
             $this->logger->info('Using file absolute path: ' . $directory);
 
             try {
-                $spl_file = new \SplFileObject($directory . '/' . $version['filename']);
+                $spl_file = new \SplFileObject($directory . '/data' );
                 $new_document_id = ilOpenTextConnector::getInstance()->addDocument(
                     $name,
                     $file,

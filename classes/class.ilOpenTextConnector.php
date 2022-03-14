@@ -140,14 +140,9 @@ class ilOpenTextConnector
     }
 
     /**
-     * @param string         $a_name
-     * @param ilObjFile      $ilfile
-     * @param array          $version
-     * @param \SplFileObject $file
-     * @return int id
      * @throws ilOpenTextConnectionException|ilOpenTextRuntimeException
      */
-    public function addDocument(string $a_name, \ilObjFile $ilfile, array $version, \SplFileObject $file) : int
+    public function addDocument(string $a_name, \ilObjFile $ilfile, ilObjFileVersion $version, \SplFileObject $file) : int
     {
         $this->prepareApiCall();
 
@@ -155,9 +150,9 @@ class ilOpenTextConnector
 
         $document_id = 0;
         try {
-            $create_date = new DateTime($version['date']);
+            $create_date = new DateTime($version->getDate());
 
-            list($user_type, $username) = $this->parseUserInfo((int) $version['user_id']);
+            list($user_type, $username) = $this->parseUserInfo((int) $version->getUserId());
 
             $res = $this->api->addDocument(
                 self::OTXT_DOCUMENT_TYPE,
@@ -276,12 +271,11 @@ class ilOpenTextConnector
      * @throws ilOpenTextConnectionException
      * @throws ilOpenTextRuntimeException
      */
-    public function addVersion(int $a_document_id, \ilObjFile $ilfile, array $version, \SplFileObject $file)
+    public function addVersion(int $a_document_id, \ilObjFile $ilfile, ilObjFileVersion $version, \SplFileObject $file)
     {
         $this->prepareApiCall();
-
-        $create_date = new DateTime($version['date']);
-        list($user_type, $user_name) = $this->parseUserInfo((int) $version['user_id']);
+        $create_date = new DateTime($version->getDate());
+        list($user_type, $user_name) = $this->parseUserInfo((int) $version->getUserId());
 
         try {
             $res = $this->api->addVersion(
@@ -340,6 +334,7 @@ class ilOpenTextConnector
 
             $body_obj->$document_manager_name = $username;
             $body_obj->$document_owner_name = $username;
+
             $body = json_encode($body_obj);
 
             $this->logger->dump($body);
@@ -353,13 +348,13 @@ class ilOpenTextConnector
             // document info
             $body_obj = new stdClass();
             $info_id_name = (string) $this->settings->getDocumentInfoId() . '_' . (string) $this->settings->getDocumentInfoIdId();
-            $body_obj->$info_id_name = $ilias_file_id;
+            $body_obj->$info_id_name = (string) $ilias_file_id;
             $body = json_encode($body_obj);
 
             $this->logger->dump($body);
 
             $this->api->updateCategory(
-                $document_id,
+                (string) $document_id,
                 $this->settings->getDocumentInfoId(),
                 $body
             );

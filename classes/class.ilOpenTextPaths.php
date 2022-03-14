@@ -62,6 +62,7 @@ class ilOpenTextPaths
                 return $path->getOpenTextId();
             }
         }
+        return null;
     }
 
     /**
