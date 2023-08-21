@@ -188,15 +188,17 @@ class ilOpenTextCronJobHandler
     {
         foreach ($versions->getData() as $idx => $version) {
             // default compare external create date
-            $this->logger->debug('Comparing ' . $version->getExternalCreateDate()->format(DateTimeInterface::ATOM) . ' with ' . $file_version->getDate());
-            $this->logger->debug('Comparing ' . $version->getFileSize() . ' with ' . $file_version->getSize());
-            $this->logger->dump($version->getExternalCreateDate()->format(DateTimeInterface::ATOM) == $file_version->getDate());
-            if (
-                $version->getExternalCreateDate()->format(DateTimeInterface::ATOM) == $file_version->getDate() &&
-                $version->getFileSize() == $file_version->getSize()
-            ) {
-                $this->logger->debug('..... matches');
-                return true;
+            if ($version->getExternalCreateDate() instanceof DateTime) {
+                $this->logger->debug('Comparing ' . $version->getExternalCreateDate()->format(DateTimeInterface::ATOM) . ' with ' . $file_version->getDate());
+                $this->logger->debug('Comparing ' . $version->getFileSize() . ' with ' . $file_version->getSize());
+                $this->logger->dump($version->getExternalCreateDate()->format(DateTimeInterface::ATOM) == $file_version->getDate());
+                if (
+                    $version->getExternalCreateDate()->format(DateTimeInterface::ATOM) == $file_version->getDate() &&
+                    $version->getFileSize() == $file_version->getSize()
+                ) {
+                    $this->logger->debug('..... matches');
+                    return true;
+                }
             }
 
             /**
